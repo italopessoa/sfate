@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace BAU.Api
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -23,6 +23,7 @@ namespace BAU.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureServicesJWT(services);
             services.AddMvc();
         }
 
@@ -34,6 +35,7 @@ namespace BAU.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            ConfigureJWT(app);
             app.UseMvc();
         }
     }
