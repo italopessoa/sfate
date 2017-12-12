@@ -6,6 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BAU.Api
 {
+    /// <summary>
+    /// Configure JTK
+    /// </summary>
     public partial class Startup
     {
         private void ConfigureServicesJWT(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
