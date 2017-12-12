@@ -26,7 +26,10 @@ namespace BAU.Api.Controllers
                 server = Environment.GetEnvironmentVariable("DB_SERVER"),
                 databse = Environment.GetEnvironmentVariable("DB_CATALOG"),
                 user = Environment.GetEnvironmentVariable("DB_USER"),
-                password = Environment.GetEnvironmentVariable("DB_PASSWORD")
+                password = Environment.GetEnvironmentVariable("DB_PASSWORD"),
+                issuer = _config["Jwt:Issuer"],
+                audience = _config["Jwt:Audience"],
+                key = _config["Jwt:Key"]
             });
         }
     }
