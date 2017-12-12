@@ -1,3 +1,4 @@
+using BAU.Api.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BAU.Api.DAL.Contexts
@@ -7,6 +8,19 @@ namespace BAU.Api.DAL.Contexts
     /// </summary>
     public class BAUDbContext : DbContext
     {
-        
+        /// <summary>
+        /// Instatiante BAUDbContext
+        /// </summary>
+        /// <param name="options">Database context options</param>
+        public BAUDbContext(DbContextOptions<BAUDbContext> options)
+            : base(options)
+        {
+
+        }
+
+        /// <summary>
+        /// Engineers
+        /// </summary>
+        public DbSet<Engineer> Engineers { get; set; }
     }
 }

@@ -17,23 +17,36 @@ namespace BAU.Api.Controllers
         {
             _config = config;
         }
+
         /// <summary>
-        /// Get system settings
+        /// Check JWT
         /// </summary>
-        /// <remarks>Get system settings.</remarks>
-        /// <response code="200">Returns a array with settings values</response>
+        /// <response code="200">Returns a message to indicate that the token is valid</response>
         /// <returns>Settings array</returns>
         [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(string[]), 200)]
         public IActionResult Get()
         {
+            return Ok("Authorized");
+        }
+
+        /// <summary>
+        /// Get system settings
+        /// </summary>
+        /// <remarks>Get system settings.</remarks>
+        /// <response code="200">Returns a array with settings values</response>
+        /// <returns>Settings array</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("settings")]
+        [ProducesResponseType(typeof(object), 200)]
+        public IActionResult Settings()
+        {
             return Ok(new
             {
-                server = Environment.GetEnvironmentVariable("DB_SERVER"),
-                databse = Environment.GetEnvironmentVariable("DB_CATALOG"),
-                user = Environment.GetEnvironmentVariable("DB_USER"),
-                password = Environment.GetEnvironmentVariable("DB_PASSWORD"),
+                SHIFT_DURATION = Environment.GetEnvironmentVariable("SHIFT_DURATION"),
+                MAX_SHIFTS_DURATION = Environment.GetEnvironmentVariable("MAX_SHIFTS_DURATION"),
                 issuer = _config["Jwt:Issuer"],
                 audience = _config["Jwt:Audience"],
                 key = _config["Jwt:Key"]
