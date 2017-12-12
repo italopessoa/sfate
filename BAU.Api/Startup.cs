@@ -34,6 +34,7 @@ namespace BAU.Api
                 );
             });
             ConfigureServicesJWT(services);
+            ConfigureServicesSwagger(services);
             services.AddMvc();
         }
 
@@ -46,6 +47,7 @@ namespace BAU.Api
             }
 
             app.UseCors("CorsPolicy");
+            ConfigureSwagger(app);
             ConfigureJWT(app);
             app.UseMvc();
         }

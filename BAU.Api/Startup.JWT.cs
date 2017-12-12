@@ -8,7 +8,7 @@ namespace BAU.Api
 {
     public partial class Startup
     {
-        public void ConfigureServicesJWT(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+        private void ConfigureServicesJWT(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
         {
             services.AddAuthentication(options =>
             {
@@ -30,7 +30,7 @@ namespace BAU.Api
                });
         }
 
-        public void ConfigureJWT(Microsoft.AspNetCore.Builder.IApplicationBuilder app)
+        private void ConfigureJWT(Microsoft.AspNetCore.Builder.IApplicationBuilder app)
         {
             app.UseAuthentication();
         }

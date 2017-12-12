@@ -10,18 +10,24 @@ namespace BAU.Api.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        // GET api/values
+        /// <summary>
+        /// Get system settings
+        /// </summary>
+        /// <remarks>Get system settings.</remarks>
+        /// <response code="200">Returns a array with settings values</response>
+        /// <returns>Settings array</returns>
         [Authorize]
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(typeof(string[]), 200)]
+        public IActionResult Get()
         {
-            return new string[] 
+            return Ok(new
             {
-                Environment.GetEnvironmentVariable("DB_SERVER"),
-                Environment.GetEnvironmentVariable("DB_CATALOG"),
-                Environment.GetEnvironmentVariable("DB_USER"),
-                Environment.GetEnvironmentVariable("DB_PASSWORD")
-            };
+                server = Environment.GetEnvironmentVariable("DB_SERVER"),
+                databse = Environment.GetEnvironmentVariable("DB_CATALOG"),
+                user = Environment.GetEnvironmentVariable("DB_USER"),
+                password = Environment.GetEnvironmentVariable("DB_PASSWORD")
+            });
         }
     }
 }
