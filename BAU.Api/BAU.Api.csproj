@@ -19,6 +19,10 @@
     <DocumentationFile>bin\Release\netcoreapp2.0\BAU.Api.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Any CPU'">
+    <DocumentationFile>bin\Any CPU\Release\netcoreapp2.0\BAU.Api.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
