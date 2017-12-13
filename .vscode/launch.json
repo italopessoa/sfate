@@ -31,10 +31,8 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "DB_SERVER": "127.0.0.1",
-                "DB_CATALOG": "BAU",
-                "DB_USER": "dummy user",
-                "DB_PASSWORD": "dummy password"
+                "SHIFT_DURATION": "4",
+                "MAX_SHIFTS_DURATION": "8"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
