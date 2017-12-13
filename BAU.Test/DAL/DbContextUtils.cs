@@ -11,13 +11,11 @@ namespace BAU.Test.DAL
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="contextName"></param>
         /// <returns></returns>
-        public static BAUDbContext GetContext()
-        {
-            var options = new DbContextOptionsBuilder<BAUDbContext>()
-                .UseInMemoryDatabase(System.Guid.NewGuid().ToString())
+        public static DbContextOptions<BAUDbContext> GetContextOptions(string contextName) =>
+            new DbContextOptionsBuilder<BAUDbContext>()
+                .UseInMemoryDatabase(contextName)
                 .Options;
-            return new BAUDbContext(options);
-        }
     }
 }
