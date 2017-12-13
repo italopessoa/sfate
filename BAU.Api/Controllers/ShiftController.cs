@@ -13,15 +13,15 @@ namespace BAU.Api.Controllers
     [Route("api/[controller]")]
     public class ShiftController : Controller
     {
-        private readonly IEnginnerRepository _enginnerRepository;
+        private readonly IShiftRepository _shiftRepository;
 
         /// <summary>
         /// Controller constructor
         /// </summary>
-        /// <param name="enginnerRepository"></param>
-        public ShiftController(IEnginnerRepository enginnerRepository)
+        /// <param name="shiftRepository"></param>
+        public ShiftController(IShiftRepository shiftRepository)
         {
-            _enginnerRepository = enginnerRepository;
+            _shiftRepository = shiftRepository;
         }
         
         /// <summary>
@@ -37,7 +37,7 @@ namespace BAU.Api.Controllers
         public IActionResult FindAvailableEngineers(int count)
         {
             IActionResult response = NoContent();
-            var engineers = _enginnerRepository.GetAvailableEngineers(count);
+            var engineers = _shiftRepository.GetAvailableEngineers(count);
             if (engineers.Any())
             {
                 response = Ok(new { engineers });

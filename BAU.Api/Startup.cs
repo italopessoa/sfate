@@ -49,7 +49,7 @@ namespace BAU.Api
                 );
             });
 
-            services.AddScoped<IEnginnerRepository,EnginnerRepository>();
+            services.AddScoped<IShiftRepository,ShiftRepository>();
             services.AddDbContext<BAUDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("SqlServer"))
             );
