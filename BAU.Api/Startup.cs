@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using BAU.Api.DAL.Repositories;
+using BAU.Api.DAL.Repositories.Interface;
 
 namespace BAU.Api
 {
@@ -47,6 +49,7 @@ namespace BAU.Api
                 );
             });
 
+            services.AddScoped<IEnginnerRepository,EnginnerRepository>();
             services.AddDbContext<BAUDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("SqlServer"))
             );

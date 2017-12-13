@@ -12,17 +12,31 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace JWT.Controllers
 {
+    /// <summary>
+    /// Authentication controller
+    /// </summary>
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
         private readonly IConfiguration _config;
+
+        /// <summary>
+        /// Controller constructor
+        /// </summary>
+        /// <param name="config"></param>
         public AuthController(IConfiguration config)
         {
             _config = config;
         }
 
+        /// <summary>
+        /// Generate authotization token
+        /// </summary>
+        /// <param name="loginModel">Login model</param>
+        /// <returns>Token</returns>
         [AllowAnonymous]
         [HttpPost]
+        [ProducesResponseType(typeof(string), 200)]
         public IActionResult Login([FromBody] LoginModel loginModel)
         {
             IActionResult response = Unauthorized();
@@ -34,6 +48,11 @@ namespace JWT.Controllers
             return response;
         }
 
+        /// <summary>
+        /// Generate token
+        /// </summary>
+        /// <param name="user">UserModel</param>
+        /// <returns>Token</returns>
         private string BuildToken(UserModel user)
         {
             var claims = new[]
@@ -54,6 +73,11 @@ namespace JWT.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        /// <summary>
+        /// Check if the user credentials are valid
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns>UserModel</returns>
         private UserModel Authenticate(LoginModel login)
         {
             UserModel user = null;

@@ -21,8 +21,8 @@ namespace BAU.Api
                     Title = "Support Wheel of Fate API",
                     Description = "A simple example ASP.NET Core Web API",
                     TermsOfService = "None",
-                    Contact = new Contact { Name = "Italo Pessoa", Email = "", Url = "http://twitter.com/italoneypessoa" },
-                    License = new License { Name = "Use under LICX", Url = "http://url.com" }
+                    Contact = new Contact { Name = "Italo Pessoa", Email = "", Url = "https://github.com/italopessoa/support-wheel-of-fate" },
+                    License = new License { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
                 });
 
                 //Set the comments path for the swagger json and ui.
