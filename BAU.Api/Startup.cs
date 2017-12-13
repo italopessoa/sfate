@@ -67,6 +67,14 @@ namespace BAU.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            var serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+            using (var serviceScope = serviceScopeFactory.CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetService<BAUDbContext>();
+                // dbContext.Database.EnsureCreated();
+                // dbContext.Database.Migrate();
+            };
+
             app.UseCors("CorsPolicy");
             ConfigureSwagger(app);
             ConfigureJWT(app);

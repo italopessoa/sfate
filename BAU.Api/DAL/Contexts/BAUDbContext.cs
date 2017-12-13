@@ -15,12 +15,16 @@ namespace BAU.Api.DAL.Contexts
         public BAUDbContext(DbContextOptions<BAUDbContext> options)
             : base(options)
         {
-
         }
 
         /// <summary>
         /// Engineers
         /// </summary>
         public DbSet<Engineer> Engineers { get; set; }
+
+        /// <summary>
+        /// Engineers shifts
+        /// </summary>
+        public DbSet<EngineerShift> EngineersShifts { get; set; }
     }
 }

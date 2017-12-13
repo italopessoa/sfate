@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,5 +15,7 @@ namespace BAU.Api.DAL.Models
         [Required(AllowEmptyStrings = false)]
         [MaxLength(50)]
         public string Name { get; set; }
+
+        public ICollection<EngineerShift> Shifts { get; set; }
     }
 }
