@@ -30,23 +30,22 @@ namespace BAU.Api.DAL.Repositories
                                     on enginner.Id equals eShift.EngineerId into engineerShiftsTemp
                                     from joinObject in engineerShiftsTemp.DefaultIfEmpty()
                                     where
-                                        joinObject.Date == null
+                                        joinObject == null
                                         ||
                                         (
                                             (joinObject.Date < shiftDate.AddDays(-1) || joinObject.Date > shiftDate.AddDays(1))
                                             &&
                                             (shiftDate.AddDays(-13) <= joinObject.Date && joinObject.Date < shiftDate)
                                         )
-
                                     select new
                                     {
-                                        Enginner = joinObject.Engineer,
-                                        Shift = new { joinObject.Date, joinObject.Duration }
+                                        Enginner = enginner,
+                                        ShiftDuration = joinObject != null ? joinObject.Duration : 0
                                     }).ToList();
 
             List<Engineer> availableEngineers = (from eng in engineers_shifts
                                                  group eng by new { eng.Enginner } into grp
-                                                 where grp.Sum(shift => shift.Shift.Duration) < 8
+                                                 where grp.Sum(shift => shift.ShiftDuration) < 8
                                                  from eng in grp
                                                  select eng.Enginner).ToList();
 
