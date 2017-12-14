@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BAU.Api.DAL.Models;
@@ -37,7 +38,7 @@ namespace BAU.Api.Controllers
         public IActionResult FindAvailableEngineers(int count)
         {
             IActionResult response = NoContent();
-            var engineers = _shiftRepository.GetAvailableEngineers(count);
+            var engineers = _shiftRepository.GetEngineersAvailableOn(DateTime.Today);
             if (engineers.Any())
             {
                 response = Ok(new { engineers });
