@@ -74,8 +74,7 @@ namespace BAU.Api
             using (var serviceScope = serviceScopeFactory.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<BAUDbContext>();
-                // dbContext.Database.EnsureCreated();
-                // dbContext.Database.Migrate();
+                dbContext.Database.EnsureCreated();
             };
 
             app.UseCors("CorsPolicy");
