@@ -8,6 +8,7 @@ using BAU.Api.DAL.Repositories;
 using BAU.Api.DAL.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using BAU.Api.Utils;
 
 namespace BAU.Test.DAL.Repositories
 {
@@ -19,7 +20,7 @@ namespace BAU.Test.DAL.Repositories
         [ClassData(typeof(GetEngineersAvailableOn_Date_Generator))]
         public void GetEngineersAvailableOn_Date(DateTime date, int nEngineers)
         {
-            string contextName = "GetEngineersAvailableOn_Today_NoEngineer()";
+            string contextName = $"GetEngineersAvailableOn_Date";
             _contextNames.Add(contextName);
             DbContextOptions<BAUDbContext> options = DbContextUtils.GetContextOptions(contextName);
             IShiftRepository repository = null;
@@ -32,22 +33,24 @@ namespace BAU.Test.DAL.Repositories
                 var engineer2 = new Engineer { Name = "Engineer 2" };// yesterday
                 var engineer3 = new Engineer { Name = "Engineer 3" };// today
                 var engineer4 = new Engineer { Name = "Engineer 4" };// tomorrow
+                var engineer5 = new Engineer { Name = "Engineer 5" };// never
                 var engineersList = new List<Engineer>
                 {
                     engineer1,
                     engineer2,
                     engineer3,
                     engineer4,
+                    engineer5,
                 };
                 context.Engineers.AddRange(engineersList);
-
+                var today = new DateTime(2017, 12, 13);
                 var shifts = new List<EngineerShift>
                 {
-                    new EngineerShift { Date = DateTime.Today.AddDays(-13), Duration = shiftDuration, Engineer = engineer1 },
-                    new EngineerShift { Date = DateTime.Today.AddDays(-6), Duration = shiftDuration, Engineer = engineer1 },
-                    new EngineerShift { Date = DateTime.Today.AddDays(-1), Duration = shiftDuration, Engineer = engineer2 },
-                    new EngineerShift { Date = DateTime.Today.AddDays(1), Duration = shiftDuration, Engineer = engineer3 },
-                    new EngineerShift { Date = DateTime.Today, Duration = shiftDuration, Engineer = engineer4 },
+                    new EngineerShift { Date = today.PreviousDayOfWeek(DayOfWeek.Monday, 1), Duration = shiftDuration, Engineer = engineer1 },
+                    new EngineerShift { Date = today.PreviousDayOfWeek(DayOfWeek.Friday, 1), Duration = shiftDuration, Engineer = engineer1 },
+                    new EngineerShift { Date = today.PreviousBusinessDay(), Duration = shiftDuration, Engineer = engineer2 },
+                    new EngineerShift { Date = today.NextBusinessDay(), Duration = shiftDuration, Engineer = engineer3 },
+                    new EngineerShift { Date = today, Duration = shiftDuration, Engineer = engineer4 },
                 };
 
                 context.EngineersShifts.AddRange(shifts);
@@ -64,7 +67,7 @@ namespace BAU.Test.DAL.Repositories
         }
 
         //[Fact]
-        public void SetEngineerShift_Success()
+        public void ScheduleEngineerShift_Success()
         {
             string contextName = "SetEngineerShift_Success";
             _contextNames.Add(contextName);
@@ -82,7 +85,24 @@ namespace BAU.Test.DAL.Repositories
         }
 
         //[Fact]
-        public void SetEngineerShift_ConsecutiveDays_Error()
+        public void ScheduleEngineerShift_ConsecutiveDays_After_Error()
+        {
+            string contextName = "SetEngineerShift_ConsecutiveDays_Error";
+            _contextNames.Add(contextName);
+            var options = DbContextUtils.GetContextOptions(contextName);
+
+            // fake data
+            using (BAUDbContext context = new BAUDbContext(options))
+            {
+            }
+
+            // test
+            using (var context = new BAUDbContext(options))
+            {
+            }
+        }
+
+        public void ScheduleEngineerShift_ConsecutiveDays_Before_Error()
         {
             string contextName = "SetEngineerShift_ConsecutiveDays_Error";
             _contextNames.Add(contextName);
@@ -100,9 +120,9 @@ namespace BAU.Test.DAL.Repositories
         }
 
         //[Fact]
-        public void SetEngineerShift_WholeDayInPeriod_Error()
+        public void ScheduleEngineerShift_ExceedsDailyLimit_Error()
         {
-            string contextName = "SetEngineerShift_WholeDayInPeriod_Error";
+            string contextName = "SetEngineerShift_ConsecutiveDays_Error";
             _contextNames.Add(contextName);
             var options = DbContextUtils.GetContextOptions(contextName);
 
@@ -117,10 +137,9 @@ namespace BAU.Test.DAL.Repositories
             }
         }
 
-        //[Fact]
-        public void SetEngineerShift_SameDay_Error()
+        public void ScheduleEngineerShift_ExceedsPeriodLimit_Error()
         {
-            string contextName = "SetEngineerShift_SameDay_Error";
+            string contextName = "SetEngineerShift_ConsecutiveDays_Error";
             _contextNames.Add(contextName);
             var options = DbContextUtils.GetContextOptions(contextName);
 
@@ -171,8 +190,8 @@ namespace BAU.Test.DAL.Repositories
     {
         private readonly List<object[]> _data = new List<object[]>
             {
-                new object[] {DateTime.Today, 0},
-                new object[] { DateTime.Today.AddDays(1), 2}
+                new object[] { new DateTime(2017,12,11), 3},
+                new object[] { new DateTime(2017,12,13), 1}//engineer 5
             };
 
         public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();

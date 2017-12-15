@@ -4,6 +4,7 @@ using BAU.Api.DAL.Contexts;
 using BAU.Api.DAL.Models;
 using BAU.Api.DAL.Repositories.Interface;
 using System.Linq;
+using BAU.Api.Utils;
 
 namespace BAU.Api.DAL.Repositories
 {
@@ -25,6 +26,10 @@ namespace BAU.Api.DAL.Repositories
 
         public IList<Engineer> GetEngineersAvailableOn(DateTime shiftDate)
         {
+            var previousBusinessDay = shiftDate.PreviousBusinessDay();
+            var nextBusinessDay = shiftDate.NextBusinessDay();
+            var lastWeek_Monday = shiftDate.PreviousDayOfWeek(DayOfWeek.Monday, 1);
+            var endOfWeek = shiftDate.NextDayOfWeek(DayOfWeek.Friday);
             var engineers_shifts = (from enginner in _context.Engineers
                                     join eShift in _context.EngineersShifts
                                     on enginner.Id equals eShift.EngineerId into engineerShiftsTemp
@@ -35,12 +40,13 @@ namespace BAU.Api.DAL.Repositories
                                         (
                                             (joinObject.Date < shiftDate.AddDays(-1) || joinObject.Date > shiftDate.AddDays(1))
                                             &&
-                                            (shiftDate.AddDays(-13) <= joinObject.Date && joinObject.Date < shiftDate)
+                                            (lastWeek_Monday <= joinObject.Date && joinObject.Date <= endOfWeek)
                                         )
                                     select new
                                     {
                                         Enginner = enginner,
-                                        ShiftDuration = joinObject != null ? joinObject.Duration : 0
+                                        ShiftDuration = joinObject != null ? joinObject.Duration : 0,
+                                        ShiftDate = joinObject != null ? joinObject.Date : DateTime.MinValue
                                     }).ToList();
 
             List<Engineer> availableEngineers = (from eng in engineers_shifts
@@ -52,12 +58,16 @@ namespace BAU.Api.DAL.Repositories
             return availableEngineers;
         }
 
+        public void ScheduleEngineerShift(int engineerId, DateTime date, int duration)
+        {
+            throw new NotImplementedException();
+        }
         public List<EngineerShift> GetEngineerShifts(int engineerId)
         {
             throw new NotImplementedException();
         }
 
-        public void SetEngineerShift(int engineerId, DateTime date)
+        public List<EngineerShift> FindEngineerShifts(int engineerId, DateTime from, DateTime to)
         {
             throw new NotImplementedException();
         }
