@@ -20,3 +20,32 @@ AppVeyor and Windows Azure
 ### Architecture
 
 there is only two layer on the project, DAL (Data Access Layer) and Controllers. As the project still in development and does not have many features create more layers like a Service or Facade could lead to needless complexity
+
+
+## DRAFTS
+```sql
+--engenheiros sem turno e sem turno consecutivo
+DECLARE @TODAY DATE = CONVERT(DATE, GETDATE())
+DECLARE @TOMORROW DATE = CONVERT(DATE, DATEADD(DAY,1,GETDATE()))
+DECLARE @YESTERDAY DATE = CONVERT(DATE, DATEADD(DAY,-1,GETDATE()))
+DECLARE @MAX_SHIFT_HOURS_ALLOWED INT = 8
+SELECT eg.id,EG.name
+FROM 
+	ENGINEER EG 
+	LEFT JOIN ENGINEERSHIFT EGS 
+		ON EG.ID = EGS.ENGINEERID
+WHERE 
+	(EGS.SHIFTDATE IS NOT NULL AND EGS.SHIFTDATE BETWEEN DATEADD(DAY, -13, @TODAY) AND @TODAY)
+	OR (
+		EGS.SHIFTDATE IS NULL --AINDA NAO POSSUEM TURNO
+		OR (
+			EGS.SHIFTDATE <> @YESTERDAY 
+			AND EGS.SHIFTDATE <> @TOMORROW
+			AND EGS.SHIFTDATE <> @TODAY
+			) --NAO POSSUI TURNO ONTEM, HOJE OU AMANHA
+		)
+GROUP BY 
+	eg.id,EG.name
+HAVING 
+	SUM(EGS.DURATION) < @MAX_SHIFT_HOURS_ALLOWED OR SUM(EGS.DURATION) IS NULL
+``` 
