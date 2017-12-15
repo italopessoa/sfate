@@ -30,7 +30,13 @@ namespace BAU.Api.Service
             {
                 throw new InvalidOperationException("An engineer can do at most one half day shift in a day.");
             }
-                throw new NotImplementedException();
+            if (shifts.Where(s => s.Date == engineerShiftModel.Date.PreviousBusinessDay()
+                || s.Date == engineerShiftModel.Date.NextBusinessDay()).Any())
+            {
+                throw new InvalidOperationException("An engineer cannot have half day shifts on consecutive days.");
+            }
+
+            throw new NotImplementedException();
         }
     }
 }
