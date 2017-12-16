@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using BAU.Api.DAL.Repositories;
 using BAU.Api.DAL.Repositories.Interface;
+using AutoMapper;
+using BAU.Api.Models;
 
 namespace BAU.Api
 {
@@ -65,6 +67,10 @@ namespace BAU.Api
         /// </summary>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            Mapper.Initialize(cfg => {
+                cfg.AddProfile<BAUMappingProfile>();
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
