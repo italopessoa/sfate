@@ -9,12 +9,54 @@ using BAU.Api.DAL.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using BAU.Api.Utils;
+using BAU.Test.Utils;
+using Microsoft.Extensions.Configuration;
 
 namespace BAU.Test.DAL.Repositories
 {
     public class ShiftRepositoryTest : IDisposable
     {
         private IList<string> _contextNames = new List<string>();
+
+
+        [Fact]
+        public void GetEngineersAvailableOn_MAX_SHIFT_SUM_HOURS_DURATION_Error()
+        {
+            string contextName = "GetEngineersAvailableOn_MAX_SHIFT_SUM_HOURS_DURATION_Error";
+            _contextNames.Add(contextName);
+            DbContextOptions<BAUDbContext> options = DbContextUtils.GetContextOptions(contextName);
+            using (var context = new BAUDbContext(options))
+            {
+                try
+                {
+                    new ShiftRepository(context, ConfigurationTestBuilder.GetConfiguration("MAX_SHIFT_SUM_HOURS_DURATION"));
+                }
+                catch (ArgumentNullException ex)
+                {
+                    Assert.Equal("MAX_SHIFT_SUM_HOURS_DURATION", ex.ParamName);
+                }
+            }
+        }
+
+        [Fact]
+        public void GetEngineersAvailableOn_WEEK_SCAN_PERIOD_Error()
+        {
+            string contextName = "GetEngineersAvailableOn_WEEK_SCAN_PERIOD_Error";
+            _contextNames.Add(contextName);
+            DbContextOptions<BAUDbContext> options = DbContextUtils.GetContextOptions(contextName);
+            using (var context = new BAUDbContext(options))
+            {
+                try
+                {
+                    new ShiftRepository(context, ConfigurationTestBuilder.GetConfiguration("WEEK_SCAN_PERIOD"));
+                }
+                catch (ArgumentNullException ex)
+                {
+                    Assert.Equal("WEEK_SCAN_PERIOD", ex.ParamName);
+                }
+            }
+        }
+
 
         [Theory(DisplayName = "Repository.GetEngineersAvailableOn_Check_Consecutive_Days")]
         [ClassData(typeof(GetEngineersAvailableOn_Check_Consecutive_Days))]
@@ -68,7 +110,7 @@ namespace BAU.Test.DAL.Repositories
             // test
             using (var context = new BAUDbContext(options))
             {
-                repository = new ShiftRepository(context);
+                repository = new ShiftRepository(context, ConfigurationTestBuilder.GetConfiguration());
                 IList<Engineer> availableEngineers = repository.GetEngineersAvailableOn(date);
                 Assert.Equal(nEngineers, availableEngineers.Count);
             }
@@ -126,7 +168,7 @@ namespace BAU.Test.DAL.Repositories
             // test
             using (var context = new BAUDbContext(options))
             {
-                repository = new ShiftRepository(context);
+                repository = new ShiftRepository(context, ConfigurationTestBuilder.GetConfiguration());
                 IList<Engineer> availableEngineers = repository.GetEngineersAvailableOn(date);
                 Assert.Equal(nEngineers, availableEngineers.Count);
             }
@@ -191,7 +233,7 @@ namespace BAU.Test.DAL.Repositories
             // test
             using (var context = new BAUDbContext(options))
             {
-                repository = new ShiftRepository(context);
+                repository = new ShiftRepository(context, ConfigurationTestBuilder.GetConfiguration());
                 IList<Engineer> availableEngineers = repository.GetEngineersAvailableOn(date);
                 Assert.Equal(nEngineers, availableEngineers.Count);
             }

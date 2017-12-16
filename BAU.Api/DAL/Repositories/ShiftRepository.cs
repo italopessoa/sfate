@@ -6,6 +6,7 @@ using BAU.Api.DAL.Repositories.Interface;
 using System.Linq;
 using BAU.Api.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace BAU.Api.DAL.Repositories
 {
@@ -17,11 +18,33 @@ namespace BAU.Api.DAL.Repositories
         private readonly BAUDbContext _context;
 
         /// <summary>
+        /// Maximum amount of hours of an engineer
+        /// </summary>
+        private readonly int MAX_SHIFT_SUM_HOURS_DURATION;
+
+        /// <summary>
+        /// Number of weeks to consider while filtering shifts
+        /// </summary>
+        private readonly int WEEK_SCAN_PERIOD;
+
+        /// <summary>
         /// Repository contructor
         /// </summary>
         /// <param name="context"></param>
-        public ShiftRepository(BAUDbContext context)
+        public ShiftRepository(BAUDbContext context, IConfiguration config)
         {
+            if (String.IsNullOrEmpty(config["MAX_SHIFT_SUM_HOURS_DURATION"]))
+            {
+                throw new ArgumentNullException("MAX_SHIFT_SUM_HOURS_DURATION");
+            }
+
+            if (String.IsNullOrEmpty(config["WEEK_SCAN_PERIOD"]))
+            {
+                throw new ArgumentNullException("WEEK_SCAN_PERIOD");
+            }
+
+            this.MAX_SHIFT_SUM_HOURS_DURATION = int.Parse(config["MAX_SHIFT_SUM_HOURS_DURATION"]);
+            this.WEEK_SCAN_PERIOD = int.Parse(config["WEEK_SCAN_PERIOD"]);
             _context = context;
         }
         public IList<Engineer> GetEngineersAvailableOn(DateTime shiftDate)
@@ -32,7 +55,7 @@ namespace BAU.Api.DAL.Repositories
 
         private List<Engineer> FindEngineersAvailableOn(DateTime shiftDate)
         {
-            var lastWeek_Monday = shiftDate.PreviousDayOfWeek(DayOfWeek.Monday, 1);
+            var lastWeek_Monday = shiftDate.PreviousDayOfWeek(DayOfWeek.Monday, this.WEEK_SCAN_PERIOD);
             var endOfWeek = shiftDate.NextDayOfWeek(DayOfWeek.Friday);
 
             IQueryable<EngineerShift> engineerShifts = FilterEngineersShiftsByPeriod(lastWeek_Monday, endOfWeek);
@@ -77,7 +100,7 @@ namespace BAU.Api.DAL.Repositories
         private IQueryable<EngineerShift> FilterEngineerShiftsByMaxShiftHours(IQueryable<EngineerShift> engineerShifts)
         {
             var engineersWithMaxShiftHours = engineerShifts.GroupBy(es => new { es.Engineer.Id, es.Duration })
-                .Where(es => es.Sum(s => s.Duration) < 8)
+                .Where(es => es.Sum(s => s.Duration) < this.MAX_SHIFT_SUM_HOURS_DURATION)
                 .Select(es => es.Key.Id).ToList();
             return engineerShifts.Where(e => engineersWithMaxShiftHours.Contains(e.EngineerId));
         }
