@@ -89,11 +89,12 @@ namespace BAU.Test.Service
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>()), Times.Never);
         }
 
-
+        [Fact]
         public void ScheduleEngineerShift_ExceedsPeriodLimit_Error()
         {
         }
-
+        
+        [Fact]
         //[Fact]
         public void ScheduleEngineerShift_Success()
         {

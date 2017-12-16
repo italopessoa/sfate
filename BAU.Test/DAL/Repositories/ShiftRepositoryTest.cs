@@ -20,9 +20,9 @@ namespace BAU.Test.DAL.Repositories
 
 
         [Fact]
-        public void GetEngineersAvailableOn_MAX_SHIFT_SUM_HOURS_DURATION_Error()
+        public void FindEngineersAvailableOn_MAX_SHIFT_SUM_HOURS_DURATION_Error()
         {
-            string contextName = "GetEngineersAvailableOn_MAX_SHIFT_SUM_HOURS_DURATION_Error";
+            string contextName = "FindEngineersAvailableOn_MAX_SHIFT_SUM_HOURS_DURATION_Error";
             _contextNames.Add(contextName);
             DbContextOptions<BAUDbContext> options = DbContextUtils.GetContextOptions(contextName);
             using (var context = new BAUDbContext(options))
@@ -39,9 +39,9 @@ namespace BAU.Test.DAL.Repositories
         }
 
         [Fact]
-        public void GetEngineersAvailableOn_WEEK_SCAN_PERIOD_Error()
+        public void FindEngineersAvailableOn_WEEK_SCAN_PERIOD_Error()
         {
-            string contextName = "GetEngineersAvailableOn_WEEK_SCAN_PERIOD_Error";
+            string contextName = "FindEngineersAvailableOn_WEEK_SCAN_PERIOD_Error";
             _contextNames.Add(contextName);
             DbContextOptions<BAUDbContext> options = DbContextUtils.GetContextOptions(contextName);
             using (var context = new BAUDbContext(options))
@@ -57,12 +57,11 @@ namespace BAU.Test.DAL.Repositories
             }
         }
 
-
-        [Theory(DisplayName = "Repository.GetEngineersAvailableOn_Check_Consecutive_Days")]
-        [ClassData(typeof(GetEngineersAvailableOn_Check_Consecutive_Days))]
-        public void GetEngineersAvailableOn_Check_Consecutive_Days(DateTime date, int nEngineers)
+        [Theory(DisplayName = "Repository.FindEngineersAvailableOn_Check_Consecutive_Days")]
+        [ClassData(typeof(FindEngineersAvailableOn_Check_Consecutive_Days))]
+        public void FindEngineersAvailableOn_Check_Consecutive_Days(DateTime date, int nEngineers)
         {
-            string contextName = $"GetEngineersAvailableOn_Check_Consecutive_Days";
+            string contextName = $"FindEngineersAvailableOn_Check_Consecutive_Days";
             _contextNames.Add(contextName);
             DbContextOptions<BAUDbContext> options = DbContextUtils.GetContextOptions(contextName);
             IShiftRepository repository = null;
@@ -111,16 +110,16 @@ namespace BAU.Test.DAL.Repositories
             using (var context = new BAUDbContext(options))
             {
                 repository = new ShiftRepository(context, ConfigurationTestBuilder.GetConfiguration());
-                IList<Engineer> availableEngineers = repository.GetEngineersAvailableOn(date);
+                IList<Engineer> availableEngineers = repository.FindEngineersAvailableOn(date);
                 Assert.Equal(nEngineers, availableEngineers.Count);
             }
         }
 
-        [Theory(DisplayName = "Repository.GetEngineersAvailableOn_Check_2HalfShifts")]
-        [ClassData(typeof(GetEngineersAvailableOn_Check_2HalfShifts))]
-        public void GetEngineersAvailableOn_Check_2HalfShifts(DateTime date, int nEngineers)
+        [Theory(DisplayName = "Repository.FindEngineersAvailableOn_Check_2HalfShifts")]
+        [ClassData(typeof(FindEngineersAvailableOn_Check_2HalfShifts))]
+        public void FindEngineersAvailableOn_Check_2HalfShifts(DateTime date, int nEngineers)
         {
-            string contextName = $"GetEngineersAvailableOn_Check_2HalfShifts";
+            string contextName = $"FindEngineersAvailableOn_Check_2HalfShifts";
             _contextNames.Add(contextName);
             DbContextOptions<BAUDbContext> options = DbContextUtils.GetContextOptions(contextName);
             IShiftRepository repository = null;
@@ -169,16 +168,16 @@ namespace BAU.Test.DAL.Repositories
             using (var context = new BAUDbContext(options))
             {
                 repository = new ShiftRepository(context, ConfigurationTestBuilder.GetConfiguration());
-                IList<Engineer> availableEngineers = repository.GetEngineersAvailableOn(date);
+                IList<Engineer> availableEngineers = repository.FindEngineersAvailableOn(date);
                 Assert.Equal(nEngineers, availableEngineers.Count);
             }
         }
 
-        [Theory(DisplayName = "Repository.GetEngineersAvailableOn_Date")]
-        [ClassData(typeof(GetEngineersAvailableOn_Date_Generator))]
-        public void GetEngineersAvailableOn_Date(DateTime date, int nEngineers)
+        [Theory(DisplayName = "Repository.FindEngineersAvailableOn_Date")]
+        [ClassData(typeof(FindEngineersAvailableOn_Date_Generator))]
+        public void FindEngineersAvailableOn_Date(DateTime date, int nEngineers)
         {
-            string contextName = $"GetEngineersAvailableOn_Date";
+            string contextName = $"FindEngineersAvailableOn_Date";
             _contextNames.Add(contextName);
             DbContextOptions<BAUDbContext> options = DbContextUtils.GetContextOptions(contextName);
             IShiftRepository repository = null;
@@ -234,7 +233,7 @@ namespace BAU.Test.DAL.Repositories
             using (var context = new BAUDbContext(options))
             {
                 repository = new ShiftRepository(context, ConfigurationTestBuilder.GetConfiguration());
-                IList<Engineer> availableEngineers = repository.GetEngineersAvailableOn(date);
+                IList<Engineer> availableEngineers = repository.FindEngineersAvailableOn(date);
                 Assert.Equal(nEngineers, availableEngineers.Count);
             }
         }
@@ -252,7 +251,7 @@ namespace BAU.Test.DAL.Repositories
     }
 
     #region generator
-    class GetEngineersAvailableOn_Date_Generator : IEnumerable<object[]>
+    class FindEngineersAvailableOn_Date_Generator : IEnumerable<object[]>
     {
         private readonly List<object[]> _data = new List<object[]>
             {
@@ -267,7 +266,7 @@ namespace BAU.Test.DAL.Repositories
     }
 
 
-    class GetEngineersAvailableOn_Check_Consecutive_Days : IEnumerable<object[]>
+    class FindEngineersAvailableOn_Check_Consecutive_Days : IEnumerable<object[]>
     {
         private readonly List<object[]> _data = new List<object[]>
             {
@@ -283,7 +282,7 @@ namespace BAU.Test.DAL.Repositories
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    class GetEngineersAvailableOn_Check_2HalfShifts : IEnumerable<object[]>
+    class FindEngineersAvailableOn_Check_2HalfShifts : IEnumerable<object[]>
     {
         private readonly List<object[]> _data = new List<object[]>
             {

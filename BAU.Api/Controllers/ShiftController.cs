@@ -38,7 +38,7 @@ namespace BAU.Api.Controllers
         public IActionResult ScheduleEngineersShift([FromBody] ScheduleModel schedule)
         {
             IActionResult response = NoContent();
-            var engineers = _shiftRepository.GetEngineersAvailableOn(schedule.Date);
+            var engineers = _shiftRepository.FindEngineersAvailableOn(schedule.Date);
             if (engineers.Any())
             {
                 response = Ok(new { engineers });

@@ -47,13 +47,13 @@ namespace BAU.Api.DAL.Repositories
             this.WEEK_SCAN_PERIOD = int.Parse(config["WEEK_SCAN_PERIOD"]);
             _context = context;
         }
-        public IList<Engineer> GetEngineersAvailableOn(DateTime shiftDate)
+        public IList<Engineer> FindEngineersAvailableOn(DateTime shiftDate)
         {
-            IList<Engineer> engineerShifts = FindEngineersAvailableOn(shiftDate);
+            IList<Engineer> engineerShifts = FilterEngineersAvailableOn(shiftDate).ToList();
             return engineerShifts.Union(_context.Engineers.Include(e => e.Shifts).Where(e => !e.Shifts.Any())).ToList();
         }
 
-        private List<Engineer> FindEngineersAvailableOn(DateTime shiftDate)
+        private IQueryable<Engineer> FilterEngineersAvailableOn(DateTime shiftDate)
         {
             var lastWeek_Monday = shiftDate.PreviousDayOfWeek(DayOfWeek.Monday, this.WEEK_SCAN_PERIOD);
             var endOfWeek = shiftDate.NextDayOfWeek(DayOfWeek.Friday);
@@ -61,7 +61,7 @@ namespace BAU.Api.DAL.Repositories
             IQueryable<EngineerShift> engineerShifts = FilterEngineersShiftsByPeriod(lastWeek_Monday, endOfWeek);
             engineerShifts = FilterEngineerShiftsByMaxShiftHours(engineerShifts);
             engineerShifts = FilterEngineerShiftsByConsecutiveShiftDays(engineerShifts, shiftDate);
-            return engineerShifts.Select(x => x.Engineer).ToList();
+            return engineerShifts.Select(x => x.Engineer);
         }
 
         public void ScheduleEngineerShift(int engineerId, DateTime date, int duration)
