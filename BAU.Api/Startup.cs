@@ -14,6 +14,8 @@ using BAU.Api.DAL.Repositories;
 using BAU.Api.DAL.Repositories.Interface;
 using AutoMapper;
 using BAU.Api.Models;
+using BAU.Api.Service.Interface;
+using BAU.Api.Service;
 
 namespace BAU.Api
 {
@@ -52,6 +54,7 @@ namespace BAU.Api
             });
 
             services.AddScoped<IShiftRepository,ShiftRepository>();
+            services.AddScoped<IShiftService,ShiftService>();
             services.AddDbContext<BAUDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("SqlServer"))
             );
