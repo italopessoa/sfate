@@ -49,7 +49,7 @@ namespace BAU.Api
                 );
             });
 
-            services.AddScoped<IEnginnerRepository,EnginnerRepository>();
+            services.AddScoped<IShiftRepository,ShiftRepository>();
             services.AddDbContext<BAUDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("SqlServer"))
             );
@@ -74,8 +74,7 @@ namespace BAU.Api
             using (var serviceScope = serviceScopeFactory.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<BAUDbContext>();
-                // dbContext.Database.EnsureCreated();
-                // dbContext.Database.Migrate();
+                dbContext.Database.EnsureCreated();
             };
 
             app.UseCors("CorsPolicy");

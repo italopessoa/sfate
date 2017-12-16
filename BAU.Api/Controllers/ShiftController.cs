@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BAU.Api.DAL.Models;
@@ -13,36 +14,51 @@ namespace BAU.Api.Controllers
     [Route("api/[controller]")]
     public class ShiftController : Controller
     {
-        private readonly IEnginnerRepository _enginnerRepository;
+        private readonly IShiftRepository _shiftRepository;
 
         /// <summary>
         /// Controller constructor
         /// </summary>
-        /// <param name="enginnerRepository"></param>
-        public ShiftController(IEnginnerRepository enginnerRepository)
+        /// <param name="shiftRepository"></param>
+        public ShiftController(IShiftRepository shiftRepository)
         {
-            _enginnerRepository = enginnerRepository;
+            _shiftRepository = shiftRepository;
         }
-        
+
         /// <summary>
         /// Find available engineers
         /// </summary>
-        /// <param name="count">Number of required engineers</param>
+        /// <param name="schedule">Schedule request model</param>
         /// <returns>List of enginners</returns>
         // [Authorize]
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(typeof(IList<Engineer>), 200)]
         [ProducesResponseType(typeof(string), 204)]
-        [Route("RequestSupportEnginners/{count:int}")]
-        public IActionResult FindAvailableEngineers(int count)
+        [Route("ScheduleNgineersShift")]
+        public IActionResult ScheduleEngineersShift([FromBody] ScheduleModel schedule)
         {
             IActionResult response = NoContent();
-            var engineers = _enginnerRepository.GetAvailableEngineers(count);
+            var engineers = _shiftRepository.GetEngineersAvailableOn(schedule.Date);
             if (engineers.Any())
             {
                 response = Ok(new { engineers });
             }
             return response;
         }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ScheduleModel
+    {
+        /// <summary>
+        /// Number of required N-gineers
+        /// </summary>
+        public int Count { get; set; }
+        
+        /// <summary>
+        /// Shift date
+        /// </summary>
+        public DateTime Date { get; set; }
     }
 }
