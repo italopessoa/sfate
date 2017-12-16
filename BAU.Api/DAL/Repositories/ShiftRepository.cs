@@ -47,7 +47,7 @@ namespace BAU.Api.DAL.Repositories
             this.WEEK_SCAN_PERIOD = int.Parse(config["WEEK_SCAN_PERIOD"]);
             _context = context;
         }
-        public IList<Engineer> FindEngineersAvailableOn(DateTime shiftDate)
+        public List<Engineer> FindEngineersAvailableOn(DateTime shiftDate)
         {
             IList<Engineer> engineerShifts = FilterEngineersAvailableOn(shiftDate).ToList();
             return engineerShifts.Union(_context.Engineers.Include(e => e.Shifts).Where(e => !e.Shifts.Any())).ToList();
@@ -64,7 +64,7 @@ namespace BAU.Api.DAL.Repositories
             return engineerShifts.Select(x => x.Engineer);
         }
 
-        public void ScheduleEngineerShift(int engineerId, DateTime date, int duration)
+        public List<EngineerShift> ScheduleEngineerShift(int engineerId, DateTime date, int duration)
         {
             throw new NotImplementedException();
         }
@@ -116,6 +116,11 @@ namespace BAU.Api.DAL.Repositories
             DateTime previous = date.DayOfWeek == DayOfWeek.Monday ? date.PreviousDayOfWeek(DayOfWeek.Friday) : date.PreviousBusinessDay();
             DateTime next = date.DayOfWeek == DayOfWeek.Friday ? date.NextDayOfWeek(DayOfWeek.Monday) : date.NextBusinessDay();
             return engineerShifts.Where(shift => shift.Date < previous || shift.Date > next);
+        }
+
+        public List<EngineerShift> ScheduleEngineerShift(List<EngineerShift> shifts)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

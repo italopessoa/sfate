@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using BAU.Api.DAL.Models;
 using BAU.Api.DAL.Repositories.Interface;
 using BAU.Api.Models;
 using BAU.Api.Service.Interface;
 using BAU.Api.Utils;
+using Microsoft.Extensions.Configuration;
 
 namespace BAU.Api.Service
 {
     public class ShiftService : IShiftService
     {
-
         private const int MAX_DAY_SHIFT_HOURS = 4;
         private readonly IShiftRepository _repository;
         public ShiftService(IShiftRepository repository)
@@ -37,6 +38,23 @@ namespace BAU.Api.Service
             }
 
             throw new NotImplementedException();
+        }
+
+        public List<EngineerShiftModel> ScheduleEngineerShift(ShiftRequestModel shiftRequest)
+        {
+            List<Engineer> engineers = _repository.FindEngineersAvailableOn(shiftRequest.Date);
+            var randomEngineers = engineers.OrderBy(x => RandomUtil.Rand.Next()).Take(2).ToList();
+
+            List<EngineerShift> shifts = randomEngineers.Select(e =>
+                new EngineerShift
+                {
+                    Date = shiftRequest.Date,
+                    EngineerId = e.Id,
+                    Duration = 4
+                }
+            ).ToList();
+
+            return Mapper.Map<List<EngineerShiftModel>>(_repository.ScheduleEngineerShift(shifts));
         }
     }
 }

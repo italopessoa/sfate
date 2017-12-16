@@ -14,7 +14,7 @@ namespace BAU.Api.DAL.Repositories.Interface
         /// </summary>
         /// <param name="shiftDate">Enginneer's schedule date</param>
         /// <returns>List of engineers</returns>
-        IList<Engineer> FindEngineersAvailableOn(DateTime shiftDate);
+        List<Engineer> FindEngineersAvailableOn(DateTime shiftDate);
 
         /// <summary>
         /// Schedule engineer shift date
@@ -22,7 +22,7 @@ namespace BAU.Api.DAL.Repositories.Interface
         /// <param name="engineerId">Engineer Id</param>
         /// <param name="date">Shift date</param>
         /// <param name="duration">Shift duration</param>
-        void ScheduleEngineerShift(int engineerId, DateTime date, int duration);
+        List<EngineerShift> ScheduleEngineerShift(List<EngineerShift> shifts);
 
         /// <summary>
         /// 
