@@ -5,6 +5,7 @@ using BAU.Api.DAL.Models;
 using BAU.Api.DAL.Repositories.Interface;
 using System.Linq;
 using BAU.Api.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace BAU.Api.DAL.Repositories
 {
@@ -23,39 +24,38 @@ namespace BAU.Api.DAL.Repositories
         {
             _context = context;
         }
-
         public IList<Engineer> GetEngineersAvailableOn(DateTime shiftDate)
         {
-            var previousBusinessDay = shiftDate.PreviousBusinessDay();
-            var nextBusinessDay = shiftDate.NextBusinessDay();
+            IList<Engineer> engineerShifts = FindEngineersAvailableOn(shiftDate);
+            return engineerShifts.Union(_context.Engineers.Include(e => e.Shifts).Where(e => !e.Shifts.Any())).ToList();
+        }
+
+        private List<Engineer> FindEngineersAvailableOn(DateTime shiftDate)
+        {
             var lastWeek_Monday = shiftDate.PreviousDayOfWeek(DayOfWeek.Monday, 1);
             var endOfWeek = shiftDate.NextDayOfWeek(DayOfWeek.Friday);
-            var engineers_shifts = (from enginner in _context.Engineers
-                                    join eShift in _context.EngineersShifts
-                                    on enginner.Id equals eShift.EngineerId into engineerShiftsTemp
-                                    from joinObject in engineerShiftsTemp.DefaultIfEmpty()
-                                    where
-                                        joinObject == null
-                                        ||
-                                        (
-                                            (joinObject.Date < shiftDate.AddDays(-1) || joinObject.Date > shiftDate.AddDays(1))
-                                            &&
-                                            (lastWeek_Monday <= joinObject.Date && joinObject.Date <= endOfWeek)
-                                        )
-                                    select new
-                                    {
-                                        Enginner = enginner,
-                                        ShiftDuration = joinObject != null ? joinObject.Duration : 0,
-                                        ShiftDate = joinObject != null ? joinObject.Date : DateTime.MinValue
-                                    }).ToList();
 
-            List<Engineer> availableEngineers = (from eng in engineers_shifts
-                                                 group eng by new { eng.Enginner } into grp
-                                                 where grp.Sum(shift => shift.ShiftDuration) < 8
-                                                 from eng in grp
-                                                 select eng.Enginner).ToList();
+            IQueryable<EngineerShift> engineerShifts = FindEngineersShiftsByPeriod(lastWeek_Monday, endOfWeek);
+            engineerShifts = FilterEngineerShiftsByConsecutiveShiftDays(engineerShifts, shiftDate);
 
-            return availableEngineers;
+            return FilterEngineerShiftsByMaxShiftHours(engineerShifts).ToList();
+        }
+        private IQueryable<EngineerShift> FindEngineersShiftsByPeriod(DateTime from, DateTime to)
+        {
+            return _context.EngineersShifts.Include(es => es.Engineer)
+                .Where(es => from.Date <= es.Date && es.Date <= to.Date);
+        }
+        private IQueryable<Engineer> FilterEngineerShiftsByMaxShiftHours(IQueryable<EngineerShift> engineerShifts)
+        {
+            return engineerShifts.GroupBy(es => new { es.Engineer, es.Duration })
+                .Where(es => es.Sum(s => s.Duration) < 8)
+                .Select(es => es.Key.Engineer);
+        }
+
+        private IQueryable<EngineerShift> FilterEngineerShiftsByConsecutiveShiftDays(IQueryable<EngineerShift> engineerShifts, DateTime date)
+        {
+            DateTime previous = date.DayOfWeek == DayOfWeek.Monday ? date.PreviousDayOfWeek(DayOfWeek.Friday) : date.PreviousBusinessDay();
+            return engineerShifts.Where(shift => shift.Date < previous || shift.Date > date.NextBusinessDay());
         }
 
         public void ScheduleEngineerShift(int engineerId, DateTime date, int duration)
