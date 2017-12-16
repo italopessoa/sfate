@@ -31,6 +31,7 @@ namespace BAU.Api.DAL.Repositories
         /// Repository contructor
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="config"></param>
         public ShiftRepository(BAUDbContext context, IConfiguration config)
         {
             if (String.IsNullOrEmpty(config["MAX_SHIFT_SUM_HOURS_DURATION"]))
@@ -88,7 +89,7 @@ namespace BAU.Api.DAL.Repositories
         /// <returns>EngineerShifts between from-end period</returns>
         private IQueryable<EngineerShift> FilterEngineersShiftsByPeriod(DateTime from, DateTime to)
         {
-            return _context.EngineersShifts.Include(es => es.Engineer)
+            return _context.EngineersShifts
                 .Where(es => from.Date <= es.Date && es.Date <= to.Date);
         }
 
