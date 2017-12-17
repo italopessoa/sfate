@@ -45,7 +45,6 @@ namespace BAU.Api.Controllers
         {
             return Ok(new
             {
-                // SHIFT_DURATION = Environment.GetEnvironmentVariable("SHIFT_DURATION"),
                 MAX_SHIFTS_DURATION = Environment.GetEnvironmentVariable("MAX_SHIFTS_DURATION"),
                 SHIFT_DURATION = _config["SHIFT_DURATION"],
                 WEEK_SCAN_PERIOD = _config["WEEK_SCAN_PERIOD"],

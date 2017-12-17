@@ -8,7 +8,6 @@ namespace BAU.Api.Models
         public DateTime Date { get; set; }
         public byte Duration { get; set; }
 
-        // override object.Equals
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
@@ -26,7 +25,6 @@ namespace BAU.Api.Models
             return true;
         }
 
-        // override object.GetHashCode
         public override int GetHashCode()
         {
             unchecked
