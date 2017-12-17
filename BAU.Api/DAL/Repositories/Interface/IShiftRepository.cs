@@ -19,9 +19,8 @@ namespace BAU.Api.DAL.Repositories.Interface
         /// <summary>
         /// Schedule engineer shift date
         /// </summary>
-        /// <param name="engineerId">Engineer Id</param>
-        /// <param name="date">Shift date</param>
-        /// <param name="duration">Shift duration</param>
+        /// <param name="shifts"></param>
+        /// <returns></returns>
         List<EngineerShift> ScheduleEngineerShift(List<EngineerShift> shifts);
 
         /// <summary>

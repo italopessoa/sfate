@@ -121,7 +121,24 @@ namespace BAU.Api.DAL.Repositories
 
         public List<EngineerShift> ScheduleEngineerShift(List<EngineerShift> shifts)
         {
-            throw new NotImplementedException();
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var shift in shifts)
+                    {
+                        _context.Add(shift);
+                    }
+                    _context.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (System.Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            return shifts;
         }
 
         #endregion
