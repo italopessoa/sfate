@@ -9,6 +9,10 @@ namespace BAU.Api.DAL.Models
     /// </summary>
     public class Engineer : BaseModel
     {
+        public Engineer()
+        {
+            Shifts = new List<EngineerShift>();
+        }
         /// <summary>
         /// Engineer's name
         /// </summary>
