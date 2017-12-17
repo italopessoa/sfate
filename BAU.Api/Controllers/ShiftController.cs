@@ -48,12 +48,29 @@ namespace BAU.Api.Controllers
         public IActionResult ScheduleEngineersShift([FromBody] ShiftRequestModel schedule)
         {
             IActionResult response = NoContent();
-            _shiftService.ScheduleEngineerShift(schedule);
-            var engineers = _shiftRepository.FindEngineersAvailableOn(schedule.Date);
-
-            if (engineers.Any())
+            if (schedule.Date.DayOfWeek == DayOfWeek.Saturday || schedule.Date.DayOfWeek == DayOfWeek.Sunday)
             {
-                response = Ok(new { engineers = Mapper.Map<List<EngineerModel>>(engineers) });
+                response = BadRequest("Weekends are not working days");
+            }
+            else if (schedule.Count == 0)
+            {
+                response = BadRequest("The date cannot be empty");
+            }
+            else
+            {
+                try
+                {
+                    var scheduledEngineers = _shiftService.ScheduleEngineerShift(schedule).Select(x => x.Engineer).ToList();
+
+                    if (scheduledEngineers.Any())
+                    {
+                        response = Ok(new { scheduledEngineers, available = Mapper.Map<List<EngineerModel>>(scheduledEngineers) });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response = BadRequest(ex.Message);
+                }
             }
             return response;
         }

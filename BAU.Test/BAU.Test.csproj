@@ -31,6 +31,9 @@
     <None Update="appsettings.Test.WEEK_SCAN_PERIOD.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="appsettings.Test.SHIFT_DURATION.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

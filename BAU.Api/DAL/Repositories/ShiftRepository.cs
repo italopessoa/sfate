@@ -50,8 +50,9 @@ namespace BAU.Api.DAL.Repositories
         }
         public List<Engineer> FindEngineersAvailableOn(DateTime shiftDate)
         {
+            var nonScheduled = _context.Engineers.Include(e => e.Shifts).Where(e => !e.Shifts.Any());
             IList<Engineer> engineerShifts = FilterEngineersAvailableOn(shiftDate).ToList();
-            return engineerShifts.Union(_context.Engineers.Include(e => e.Shifts).Where(e => !e.Shifts.Any())).ToList();
+            return engineerShifts.Union(nonScheduled).ToList();
         }
 
         private IQueryable<Engineer> FilterEngineersAvailableOn(DateTime shiftDate)
