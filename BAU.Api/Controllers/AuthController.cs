@@ -33,9 +33,11 @@ namespace JWT.Controllers
         /// Generate authotization token
         /// </summary>
         /// <param name="loginModel">Login model</param>
+        /// <response code="200">Valid user</response>
         /// <returns>Token</returns>
         [AllowAnonymous]
         [HttpPost]
+        [Produces("application/json")]
         [ProducesResponseType(typeof(string), 200)]
         public IActionResult Login([FromBody] LoginModel loginModel)
         {

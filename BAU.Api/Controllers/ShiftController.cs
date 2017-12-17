@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using BAU.Api.DAL.Models;
 using BAU.Api.DAL.Repositories.Interface;
+using BAU.Api.Models;
+using BAU.Api.Service.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +18,16 @@ namespace BAU.Api.Controllers
     public class ShiftController : Controller
     {
         private readonly IShiftRepository _shiftRepository;
+        private readonly IShiftService _shiftService;
 
         /// <summary>
         /// Controller constructor
         /// </summary>
         /// <param name="shiftRepository"></param>
-        public ShiftController(IShiftRepository shiftRepository)
+        /// <param name="shiftService"></param>
+        public ShiftController(IShiftRepository shiftRepository, IShiftService shiftService)
         {
+            _shiftService = shiftService;
             _shiftRepository = shiftRepository;
         }
 
@@ -29,36 +35,48 @@ namespace BAU.Api.Controllers
         /// Find available engineers
         /// </summary>
         /// <param name="schedule">Schedule request model</param>
+        /// <response code="200">Return engineers scheduled for the selected date</response>
+        /// <response code="401">JWT is not valid or is null</response>
+        /// <response code="400">If the date is a weekend day; If the date value is empty; If the Count value is empty</response>
         /// <returns>List of enginners</returns>
         // [Authorize]
         [HttpPost]
-        [ProducesResponseType(typeof(IList<Engineer>), 200)]
-        [ProducesResponseType(typeof(string), 204)]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(IList<EngineerModel>), 200)]
+        [ProducesResponseType(typeof(string), 401)]
+        [ProducesResponseType(typeof(string), 400)]
         [Route("ScheduleNgineersShift")]
-        public IActionResult ScheduleEngineersShift([FromBody] ScheduleModel schedule)
+        public IActionResult ScheduleEngineersShift([FromBody] ShiftRequestModel schedule)
         {
             IActionResult response = NoContent();
-            var engineers = _shiftRepository.GetEngineersAvailableOn(schedule.Date);
-            if (engineers.Any())
+            if (schedule.Date.DayOfWeek == DayOfWeek.Saturday || schedule.Date.DayOfWeek == DayOfWeek.Sunday)
             {
-                response = Ok(new { engineers });
+                response = BadRequest("Weekends are not valid working days.");
+            }
+            else if (schedule.Date == DateTime.MinValue)
+            {
+                response = BadRequest("Date value cannot be empty.");
+            }
+            else if (schedule.Count == 0)
+            {
+                response = BadRequest("The number of support engineers is required.");
+            }
+            else
+            {
+                try
+                {
+                    var scheduledEngineers = _shiftService.ScheduleEngineerShift(schedule).Select(x => x.Engineer).ToList();
+                    if (scheduledEngineers.Any())
+                    {
+                        response = Ok(new { scheduledEngineers, available = Mapper.Map<List<EngineerModel>>(scheduledEngineers) });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    response = BadRequest(ex.Message);
+                }
             }
             return response;
         }
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    public class ScheduleModel
-    {
-        /// <summary>
-        /// Number of required N-gineers
-        /// </summary>
-        public int Count { get; set; }
-        
-        /// <summary>
-        /// Shift date
-        /// </summary>
-        public DateTime Date { get; set; }
     }
 }

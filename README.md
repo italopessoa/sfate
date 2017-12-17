@@ -3,7 +3,7 @@
 ### ShiftController 
 used to manage engineers turns find engineers save turns
 
-### SHIFT_DURATION and MAX_SHIFTS_DURATION 
+### SHIFT_DURATION, MAX_SHIFT_SUM_HOURS_DURATION, WEEK_SCAN_PERIOD
 used to configure how much time takes each turn and the maximum amount of time an engineer can have in his N weeks period. To avoid creating a new table with only two values that will barely change, I decided to use environment variables to store them.
 
 ### CI/CD 

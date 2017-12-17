@@ -21,7 +21,7 @@ namespace BAU.Api.Controllers
         /// <summary>
         /// Check JWT
         /// </summary>
-        /// <response code="200">Returns a message to indicate that the token is valid</response>
+        /// <response code="200">Returns a message to indicate if the token is valid</response>
         /// <returns>Settings array</returns>
         [Authorize]
         [HttpGet]
@@ -45,8 +45,10 @@ namespace BAU.Api.Controllers
         {
             return Ok(new
             {
-                SHIFT_DURATION = Environment.GetEnvironmentVariable("SHIFT_DURATION"),
                 MAX_SHIFTS_DURATION = Environment.GetEnvironmentVariable("MAX_SHIFTS_DURATION"),
+                SHIFT_DURATION = _config["SHIFT_DURATION"],
+                WEEK_SCAN_PERIOD = _config["WEEK_SCAN_PERIOD"],
+                MAX_SHIFT_SUM_HOURS_DURATION = _config["MAX_SHIFT_SUM_HOURS_DURATION"],
                 issuer = _config["Jwt:Issuer"],
                 audience = _config["Jwt:Audience"],
                 key = _config["Jwt:Key"]

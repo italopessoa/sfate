@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BAU.Api.Models;
 
 namespace BAU.Api.Service.Interface
@@ -10,5 +11,7 @@ namespace BAU.Api.Service.Interface
         /// </summary>
         /// <param name="engineerShiftModel"></param>
         void ScheduleEngineerShift(EngineerShiftModel engineerShiftModel);
+
+        List<EngineerShiftModel> ScheduleEngineerShift(ShiftRequestModel shiftRequest);
     }
 }
