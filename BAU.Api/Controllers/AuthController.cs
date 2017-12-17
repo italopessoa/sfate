@@ -30,7 +30,7 @@ namespace JWT.Controllers
         }
 
         /// <summary>
-        /// Generate authotization token
+        /// Generate authorization token
         /// </summary>
         /// <param name="loginModel">Login model</param>
         /// <response code="200">Valid user</response>

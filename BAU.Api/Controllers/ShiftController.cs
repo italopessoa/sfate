@@ -17,32 +17,29 @@ namespace BAU.Api.Controllers
     [Route("api/[controller]")]
     public class ShiftController : Controller
     {
-        private readonly IShiftRepository _shiftRepository;
         private readonly IShiftService _shiftService;
 
         /// <summary>
         /// Controller constructor
         /// </summary>
-        /// <param name="shiftRepository"></param>
         /// <param name="shiftService"></param>
-        public ShiftController(IShiftRepository shiftRepository, IShiftService shiftService)
+        public ShiftController(IShiftService shiftService)
         {
             _shiftService = shiftService;
-            _shiftRepository = shiftRepository;
         }
 
         /// <summary>
         /// Find available engineers
         /// </summary>
         /// <param name="schedule">Schedule request model</param>
-        /// <response code="200">Return engineers scheduled for the selected date</response>
+        /// <response code="201">Return engineers scheduled for the selected date</response>
         /// <response code="401">JWT is not valid or is null</response>
         /// <response code="400">If the date is a weekend day; If the date value is empty; If the Count value is empty</response>
         /// <returns>List of enginners</returns>
-        // [Authorize]
+        //[Authorize]
         [HttpPost]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(IList<EngineerModel>), 200)]
+        [ProducesResponseType(typeof(IList<EngineerModel>), 201)]
         [ProducesResponseType(typeof(string), 401)]
         [ProducesResponseType(typeof(string), 400)]
         [Route("ScheduleNgineersShift")]
@@ -68,7 +65,7 @@ namespace BAU.Api.Controllers
                     var scheduledEngineers = _shiftService.ScheduleEngineerShift(schedule).Select(x => x.Engineer).ToList();
                     if (scheduledEngineers.Any())
                     {
-                        response = Ok(new { scheduledEngineers, available = Mapper.Map<List<EngineerModel>>(scheduledEngineers) });
+                        response = Ok(Mapper.Map<List<EngineerModel>>(scheduledEngineers));
                     }
                 }
                 catch (Exception ex)
