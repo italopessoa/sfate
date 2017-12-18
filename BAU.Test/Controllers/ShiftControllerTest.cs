@@ -9,12 +9,12 @@ using BAU.Api.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace BAU.Test.Controllers
 {
     public class ShiftControllerTest
     {
-
         [Fact]
         public void ScheduleEngineersShift_Date_Weekend_Error()
         {
@@ -65,10 +65,16 @@ namespace BAU.Test.Controllers
             mockService.Verify(m => m.ScheduleEngineerShift(It.IsAny<ShiftRequestModel>()), Times.Once());
         }
 
-        [Fact(Skip = "Somehow it is not working when executed with other test cases ¯\\_(ツ)_/¯")]
+        [Fact]
         public void ScheduleEngineersShift_Success()
         {
-            Mapper.Reset();
+            if(Mapper.Instance == null)
+            {
+                Mapper.Initialize(cfg =>
+                {
+                    cfg.AddProfile<BAUMappingProfile>();
+                });
+            }
             Mock<IShiftService> mockService = new Mock<IShiftService>(MockBehavior.Strict);
             mockService.Setup(s => s.ScheduleEngineerShift(It.IsAny<ShiftRequestModel>()))
             .Returns(
