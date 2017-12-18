@@ -84,5 +84,10 @@ namespace BAU.Api.Service
 
             return Mapper.Map<List<EngineerShiftModel>>(_repository.ScheduleEngineerShift(shifts));
         }
+
+        public List<EngineerShiftModel> FindAll()
+        {
+            return Mapper.Map<List<EngineerShiftModel>>(_repository.FindAll());
+        }
     }
 }

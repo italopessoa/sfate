@@ -39,7 +39,7 @@ namespace BAU.Api.Controllers
         //[Authorize]
         [HttpPost]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(IList<EngineerModel>), 201)]
+        [ProducesResponseType(typeof(List<EngineerModel>), 201)]
         [ProducesResponseType(typeof(string), 401)]
         [ProducesResponseType(typeof(string), 400)]
         [Route("ScheduleNgineersShift")]
@@ -74,6 +74,52 @@ namespace BAU.Api.Controllers
                 }
             }
             return response;
+        }
+
+        /// <summary>
+        /// Get shifts scheduled
+        /// </summary>
+        /// <response code="200">Return all shifts</response>
+        /// <returns>List of shifts</returns>
+        //[Authorize]
+        [HttpGet]
+        [Produces("application/json")]
+        [Route("All")]
+        [ProducesResponseType(typeof(List<ShiftSummary>), 200)]
+        public IActionResult GetShifts()
+        {
+            List<ShiftSummary> shifts = new List<ShiftSummary>();
+            var result = _shiftService.FindAll()
+                .GroupBy(item => new
+                {
+                    item.Date,
+                    item.Engineer.Name
+                })
+                .Select(group => new
+                {
+                    Date = group.Key.Date.ToShortDateString(),
+                    EngineerName = group.Key.Name
+                }).OrderBy(x => x.Date);
+            result.ToList().ForEach(item =>
+            {
+                var index = shifts.FindIndex(x => x.Date.Equals(item.Date));
+                if (index >= 0)
+                {
+                    shifts[index].Engineers.Add(item.EngineerName);
+                }
+                else
+                {
+                    shifts.Add(new ShiftSummary { Date = item.Date, Engineers = new List<string> { item.EngineerName } });
+                }
+            });
+
+            return Ok(shifts);
+        }
+
+        class ShiftSummary
+        {
+            public string Date { get; set; }
+            public List<string> Engineers { get; set; }
         }
     }
 }

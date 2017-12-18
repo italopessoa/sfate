@@ -142,6 +142,11 @@ namespace BAU.Api.DAL.Repositories
             return shifts;
         }
 
+        public List<EngineerShift> FindAll()
+        {
+            return _context.EngineersShifts.Include(x => x.Engineer).ToList();
+        }
+
         #endregion
     }
 }

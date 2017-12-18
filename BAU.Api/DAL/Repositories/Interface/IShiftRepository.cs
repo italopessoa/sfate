@@ -17,10 +17,10 @@ namespace BAU.Api.DAL.Repositories.Interface
         List<Engineer> FindEngineersAvailableOn(DateTime shiftDate);
 
         /// <summary>
-        /// Schedule engineer shift date
-        /// </summary>
-        /// <param name="shifts"></param>
-        /// <returns></returns>
+        /// Schedule engineer shift
+        /// /// </summary>
+        /// <param name="shifts">List of shifts to be scheduled </param>
+        /// <returns>Scheduled shifts </returns>
         List<EngineerShift> ScheduleEngineerShift(List<EngineerShift> shifts);
 
         /// <summary>
@@ -38,5 +38,11 @@ namespace BAU.Api.DAL.Repositories.Interface
         /// <param name="to"></param>
         /// <returns></returns>
         List<EngineerShift> FindEngineerShifts(int engineerId, DateTime from, DateTime to);
+
+        /// <summary>
+        /// Find all scheduled shifts
+        /// </summary>
+        /// <returns>Lilst of Shifts</returns>
+        List<EngineerShift> FindAll();
     }
 }
