@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BAU.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
@@ -23,7 +24,6 @@ namespace BAU.Api.Controllers
         /// </summary>
         /// <response code="200">Returns a message to indicate if the token is valid</response>
         /// <returns>Settings array</returns>
-        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(string[]), 200)]
         public IActionResult Get()
@@ -37,7 +37,6 @@ namespace BAU.Api.Controllers
         /// <remarks>Get system settings.</remarks>
         /// <response code="200">Returns a array with settings values</response>
         /// <returns>Settings array</returns>
-        [AllowAnonymous]
         [HttpGet]
         [Route("settings")]
         [ProducesResponseType(typeof(object), 200)]

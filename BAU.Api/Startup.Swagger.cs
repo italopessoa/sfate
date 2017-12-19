@@ -15,6 +15,7 @@ namespace BAU.Api
         {
             services.AddSwaggerGen(c =>
             {
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Please insert JWT Bearer into the field", Name = "Authorization", Type="apiKey"});
                 c.SwaggerDoc("v1", new Info
                 {
                     Version = "v1",

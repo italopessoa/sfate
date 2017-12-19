@@ -52,15 +52,16 @@ namespace JWT.Controllers
 
         /// <summary>
         /// Generate token
-        /// </summary>
+        /// /// </summary>
         /// <param name="user">UserModel</param>
         /// <returns>Token</returns>
         private string BuildToken(UserModel user)
         {
             var claims = new[]
-           {
+            {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString())
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
