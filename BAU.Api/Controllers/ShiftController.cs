@@ -14,6 +14,7 @@ namespace BAU.Api.Controllers
     /// <summary>
     /// Shifts controller
     /// </summary>
+    [Authorize]
     [Route("api/[controller]")]
     public class ShiftController : Controller
     {
@@ -36,7 +37,6 @@ namespace BAU.Api.Controllers
         /// <response code="401">JWT is not valid or is null</response>
         /// <response code="400">If the date is a weekend day; If the date value is empty; If the Count value is empty</response>
         /// <returns>List of enginners</returns>
-        //[Authorize]
         [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(typeof(List<EngineerModel>), 201)]
@@ -81,7 +81,6 @@ namespace BAU.Api.Controllers
         /// </summary>
         /// <response code="200">Return all shifts</response>
         /// <returns>List of shifts</returns>
-        //[Authorize]
         [HttpGet]
         [Produces("application/json")]
         [Route("All")]
