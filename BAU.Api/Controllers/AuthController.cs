@@ -41,7 +41,7 @@ namespace JWT.Controllers
         [ProducesResponseType(typeof(string), 200)]
         public IActionResult Login([FromBody] LoginModel loginModel)
         {
-            IActionResult response = Unauthorized();
+            IActionResult response = BadRequest("Username or password is incorrect");
             UserModel user = Authenticate(loginModel);
             if (user != null)
             {
@@ -84,7 +84,7 @@ namespace JWT.Controllers
         private UserModel Authenticate(LoginModel login)
         {
             UserModel user = null;
-            if (login != null)
+            if (login.Username.Equals("support") && login.Password.Equals("support"))
             {
                 user = new UserModel { UserName = login.Username };
             }
