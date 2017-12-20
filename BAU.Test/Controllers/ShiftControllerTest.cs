@@ -6,6 +6,7 @@ using BAU.Api.DAL.Repositories.Interface;
 using BAU.Api.Models;
 using BAU.Api.Service;
 using BAU.Api.Service.Interface;
+using BAU.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -44,7 +45,7 @@ namespace BAU.Test.Controllers
         {
             Mock<IShiftService> mockService = new Mock<IShiftService>(MockBehavior.Strict);
             ShiftController controller = new ShiftController(mockService.Object);
-            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Date = new DateTime(2017, 12, 18) });
+            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Date = DateTime.Now.NextBusinessDay() });
             Assert.NotNull(result);
             Assert.True(result.GetType() == typeof(BadRequestObjectResult));
             Assert.Equal("The number of support engineers is required.", (result as BadRequestObjectResult).Value);
@@ -58,11 +59,24 @@ namespace BAU.Test.Controllers
             mockService.Setup(s => s.ScheduleEngineerShift(It.IsAny<ShiftRequestModel>())).Throws(new InvalidOperationException("Testing controller exception handler"));
 
             ShiftController controller = new ShiftController(mockService.Object);
-            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Count = 1, Date = new DateTime(2017, 12, 18) });
+            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Count = 1, Date = DateTime.Now.NextBusinessDay() });
             Assert.NotNull(result);
             Assert.True(result.GetType() == typeof(BadRequestObjectResult));
             Assert.Equal("Testing controller exception handler", (result as BadRequestObjectResult).Value);
             mockService.Verify(m => m.ScheduleEngineerShift(It.IsAny<ShiftRequestModel>()), Times.Once());
+        }
+
+        [Fact]
+        public void ScheduleEngineersShift_AllValuesNull_Error()
+        {
+            Mock<IShiftService> mockService = new Mock<IShiftService>(MockBehavior.Strict);
+
+            ShiftController controller = new ShiftController(mockService.Object);
+            var result = controller.ScheduleEngineersShift(null);
+            Assert.NotNull(result);
+            Assert.True(result.GetType() == typeof(BadRequestObjectResult));
+            Assert.Equal("All values must be informed.", (result as BadRequestObjectResult).Value);
+            mockService.Verify(m => m.ScheduleEngineerShift(It.IsAny<ShiftRequestModel>()), Times.Never());
         }
 
         [Fact(Skip = "Somehow it is not working when executed with other test cases ¯\\_(ツ)_/¯")]

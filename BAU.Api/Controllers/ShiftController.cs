@@ -33,18 +33,21 @@ namespace BAU.Api.Controllers
         /// Find available engineers
         /// </summary>
         /// <param name="schedule">Schedule request model</param>
-        /// <response code="201">Return engineers scheduled for the selected date</response>
+        /// <response code="200">Return engineers scheduled for the selected date</response>
         /// <response code="401">JWT is not valid or is null</response>
         /// <response code="400">If the date is a weekend day; If the date value is empty; If the Count value is empty</response>
         /// <returns>List of enginners</returns>
         [HttpPost]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(List<EngineerModel>), 201)]
+        [ProducesResponseType(typeof(List<EngineerModel>), 200)]
         [ProducesResponseType(typeof(string), 401)]
         [ProducesResponseType(typeof(string), 400)]
         [Route("ScheduleNgineersShift")]
         public IActionResult ScheduleEngineersShift([FromBody] ShiftRequestModel schedule)
         {
+            if (schedule == null)
+                return BadRequest("All values must be informed.");
+
             IActionResult response = NoContent();
             if (schedule.Date.DayOfWeek == DayOfWeek.Saturday || schedule.Date.DayOfWeek == DayOfWeek.Sunday)
             {
@@ -53,6 +56,10 @@ namespace BAU.Api.Controllers
             else if (schedule.Date == DateTime.MinValue)
             {
                 response = BadRequest("Date value cannot be empty.");
+            }
+            else if (schedule.Date < DateTime.Now.Date)
+            {
+                response = BadRequest("It is not possible to schedule backward.");
             }
             else if (schedule.Count == 0)
             {
