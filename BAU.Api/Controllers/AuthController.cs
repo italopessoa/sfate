@@ -41,7 +41,7 @@ namespace JWT.Controllers
         [ProducesResponseType(typeof(string), 200)]
         public IActionResult Login([FromBody] LoginModel loginModel)
         {
-            IActionResult response = Unauthorized();
+            IActionResult response = BadRequest("Username or password is incorrect");
             UserModel user = Authenticate(loginModel);
             if (user != null)
             {
@@ -52,15 +52,16 @@ namespace JWT.Controllers
 
         /// <summary>
         /// Generate token
-        /// </summary>
+        /// /// </summary>
         /// <param name="user">UserModel</param>
         /// <returns>Token</returns>
         private string BuildToken(UserModel user)
         {
             var claims = new[]
-           {
+            {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString())
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -69,7 +70,7 @@ namespace JWT.Controllers
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddMinutes(double.Parse(_config["Jwt:LifeTimeInMinutes"])),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -83,7 +84,7 @@ namespace JWT.Controllers
         private UserModel Authenticate(LoginModel login)
         {
             UserModel user = null;
-            if (login != null)
+            if (login.Username.Equals("support") && login.Password.Equals("support"))
             {
                 user = new UserModel { UserName = login.Username };
             }

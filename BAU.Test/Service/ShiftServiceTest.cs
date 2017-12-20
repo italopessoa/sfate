@@ -27,7 +27,7 @@ namespace BAU.Test.Service
         {
             Mock<IShiftRepository> mockRepository = new Mock<IShiftRepository>(MockBehavior.Strict);
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => new ShiftService(mockRepository.Object, Utils.ConfigurationTestBuilder.GetConfiguration("SHIFT_DURATION")));
-            Assert.Equal("SHIFT_DURATION", exception.ParamName);
+            Assert.Equal("App:SHIFT_DURATION", exception.ParamName);
             Mapper.Reset();
         }
 

@@ -18,11 +18,11 @@ namespace BAU.Api.Service
         private readonly IShiftRepository _repository;
         public ShiftService(IShiftRepository repository, IConfiguration config)
         {
-            if (String.IsNullOrEmpty(config["SHIFT_DURATION"]))
+            if (String.IsNullOrEmpty(config["App:SHIFT_DURATION"]))
             {
-                throw new ArgumentNullException("SHIFT_DURATION");
+                throw new ArgumentNullException("App:SHIFT_DURATION");
             }
-            SHIFT_DURATION = byte.Parse(config["SHIFT_DURATION"]);
+            SHIFT_DURATION = byte.Parse(config["App:SHIFT_DURATION"]);
             _repository = repository;
         }
         public void ScheduleEngineerShift(EngineerShiftModel engineerShiftModel)
