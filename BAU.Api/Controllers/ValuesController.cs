@@ -44,12 +44,13 @@ namespace BAU.Api.Controllers
         {
             return Ok(new
             {
-                SHIFT_DURATION = _config["SHIFT_DURATION"],
-                WEEK_SCAN_PERIOD = _config["WEEK_SCAN_PERIOD"],
-                MAX_SHIFT_SUM_HOURS_DURATION = _config["MAX_SHIFT_SUM_HOURS_DURATION"],
+                SHIFT_DURATION = _config["App:SHIFT_DURATION"],
+                WEEK_SCAN_PERIOD = _config["App:WEEK_SCAN_PERIOD"],
+                MAX_SHIFT_SUM_HOURS_DURATION = _config["App:MAX_SHIFT_SUM_HOURS_DURATION"],
                 issuer = _config["Jwt:Issuer"],
                 audience = _config["Jwt:Audience"],
-                key = _config["Jwt:Key"]
+                key = _config["Jwt:Key"],
+                LifeTimeInMinutes = _config["Jwt:LifeTimeInMinutes"]
             });
         }
     }
