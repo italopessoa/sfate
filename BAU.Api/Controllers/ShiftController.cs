@@ -36,6 +36,9 @@ namespace BAU.Api.Controllers
         /// <response code="200">Return engineers scheduled for the selected date</response>
         /// <response code="401">JWT is not valid or is null</response>
         /// <response code="400">If the date is a weekend day; If the date value is empty; If the Count value is empty</response>
+        /// <remarks>
+        /// EndDate is not required
+        /// </remarks>
         /// <returns>List of enginners</returns>
         [HttpPost]
         [Produces("application/json")]
@@ -184,7 +187,15 @@ namespace BAU.Api.Controllers
 
         class ShiftSummary
         {
+            /// <summary>
+            /// Schedule date
+            /// </summary>
             public string Date { get; set; }
+
+            /// <summary>
+            /// Engineers that are scheduled for a shift on the date
+            /// </summary>
+            /// <returns></returns>
             public List<string> Engineers { get; set; }
         }
     }

@@ -3,6 +3,10 @@ namespace BAU.Api.Models
     public class EngineerModel
     {
         public int Id { get; set; }
+
+        /// <summary>
+        /// Engineer name
+        /// </summary>
         public string Name { get; set; }
 
         // override object.Equals
