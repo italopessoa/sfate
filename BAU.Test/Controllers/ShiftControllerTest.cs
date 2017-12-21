@@ -79,10 +79,75 @@ namespace BAU.Test.Controllers
             mockService.Verify(m => m.ScheduleEngineerShift(It.IsAny<ShiftRequestModel>()), Times.Never());
         }
 
+        [Fact]
+        public void ScheduleEngineersShiftRange_EndDate_Error()
+        {
+            Mock<IShiftService> mockService = new Mock<IShiftService>(MockBehavior.Strict);
+            mockService.Setup(s => s.ScheduleEngineerShiftRange(It.IsAny<ShiftRequestModel>()));//.Returns(new List<EngineerShiftModel>());
+
+            ShiftController controller = new ShiftController(mockService.Object);
+            var date = DateTime.Now.NextDayOfWeek(DayOfWeek.Thursday);
+            var model = new ShiftRequestModel
+            {
+                Count = 2,
+                StarDate = date.NextDayOfWeek(DayOfWeek.Tuesday),
+                EndDate = date
+            };
+            var result = controller.ScheduleEngineersShiftRange(model);
+            Assert.NotNull(result);
+            Assert.True(result.GetType() == typeof(BadRequestObjectResult));
+
+            Assert.Equal("The final date must be greater than the initial date.", (result as BadRequestObjectResult).Value);
+            mockService.Verify(m => m.ScheduleEngineerShiftRange(It.IsAny<ShiftRequestModel>()), Times.Never());
+        }
+
+        [Fact]
+        public void ScheduleEngineersShiftRange_Exception()
+        {
+            Mock<IShiftService> mockService = new Mock<IShiftService>(MockBehavior.Strict);
+            mockService.Setup(s => s.ScheduleEngineerShiftRange(It.IsAny<ShiftRequestModel>())).Throws(new InvalidOperationException("Testing controller exception handler"));
+
+            ShiftController controller = new ShiftController(mockService.Object);
+            var date = DateTime.Now.NextDayOfWeek(DayOfWeek.Thursday);
+            var model = new ShiftRequestModel
+            {
+                Count = 2,
+                StarDate = date,
+                EndDate = date.NextDayOfWeek(DayOfWeek.Tuesday)
+            };
+            var result = controller.ScheduleEngineersShiftRange(model);
+            Assert.NotNull(result);
+            Assert.True(result.GetType() == typeof(BadRequestObjectResult));
+            Assert.Equal("Testing controller exception handler", (result as BadRequestObjectResult).Value);
+            mockService.Verify(m => m.ScheduleEngineerShiftRange(It.IsAny<ShiftRequestModel>()), Times.Once());
+        }
+
+        [Fact]
+        public void ScheduleEngineersShiftRange_Success()
+        {
+            Mock<IShiftService> mockService = new Mock<IShiftService>(MockBehavior.Strict);
+            mockService.Setup(s => s.ScheduleEngineerShiftRange(It.IsAny<ShiftRequestModel>()));//.Returns(new List<EngineerShiftModel>());
+
+            ShiftController controller = new ShiftController(mockService.Object);
+            var date = DateTime.Now.NextDayOfWeek(DayOfWeek.Thursday);
+            var model = new ShiftRequestModel
+            {
+                Count = 2,
+                StarDate = date,
+                EndDate = date.NextDayOfWeek(DayOfWeek.Tuesday)
+            };
+            var result = controller.ScheduleEngineersShiftRange(model);
+            Assert.NotNull(result);
+            Assert.True(result.GetType() == typeof(OkObjectResult));
+
+            mockService.Verify(m => m.ScheduleEngineerShiftRange(model), Times.Once());
+        }
+
+
         [Fact(Skip = "Somehow it is not working when executed with other test cases ¯\\_(ツ)_/¯")]
         public void ScheduleEngineersShift_Success()
         {
-            if(Mapper.Instance == null)
+            if (Mapper.Instance == null)
             {
                 Mapper.Initialize(cfg =>
                 {

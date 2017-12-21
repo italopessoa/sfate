@@ -143,5 +143,31 @@ namespace BAU.Test.Service
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Never());
             Mapper.Reset();
         }
+
+        [Fact]
+        public void ScheduleEngineerShiftRange_DateRange_Success()
+        {
+            var engineers = new List<Engineer>
+            {
+                new Engineer{Name = "1", Id = 1 },
+                new Engineer{Name = "2", Id = 2 },
+            };
+
+            Mock<IShiftRepository> mockRepository = new Mock<IShiftRepository>(MockBehavior.Strict);
+            mockRepository.Setup(s => s.FindEngineersAvailableOn(It.IsAny<DateTime>())).Returns(engineers);
+            mockRepository.Setup(s => s.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>())).Returns(new List<EngineerShift>());
+
+            IShiftService service = new ShiftService(mockRepository.Object, Utils.ConfigurationTestBuilder.GetConfiguration());
+            service.ScheduleEngineerShiftRange(new ShiftRequestModel
+            {
+                StarDate = new DateTime(2017, 12, 20),
+                EndDate = new DateTime(2017, 12, 26),
+                Count = 2
+            });
+
+            mockRepository.Verify(m => m.FindEngineersAvailableOn(It.IsAny<DateTime>()), Times.Exactly(5));
+            mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Exactly(5));
+            Mapper.Reset();
+        }
     }
 }
