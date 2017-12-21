@@ -49,15 +49,15 @@ namespace BAU.Api.Controllers
                 return BadRequest("All values must be informed.");
 
             IActionResult response = NoContent();
-            if (schedule.Date.DayOfWeek == DayOfWeek.Saturday || schedule.Date.DayOfWeek == DayOfWeek.Sunday)
+            if (schedule.StarDate.DayOfWeek == DayOfWeek.Saturday || schedule.StarDate.DayOfWeek == DayOfWeek.Sunday)
             {
                 response = BadRequest("Weekends are not valid working days.");
             }
-            else if (schedule.Date == DateTime.MinValue)
+            else if (schedule.StarDate == DateTime.MinValue)
             {
                 response = BadRequest("Date value cannot be empty.");
             }
-            else if (schedule.Date < DateTime.Now.Date)
+            else if (schedule.StarDate < DateTime.Now.Date)
             {
                 response = BadRequest("It is not possible to schedule backward.");
             }

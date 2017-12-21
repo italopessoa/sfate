@@ -64,19 +64,19 @@ namespace BAU.Api.Service
 
         public List<EngineerShiftModel> ScheduleEngineerShift(ShiftRequestModel shiftRequest)
         {
-            List<Engineer> engineers = _repository.FindEngineersAvailableOn(shiftRequest.Date);
+            List<Engineer> engineers = _repository.FindEngineersAvailableOn(shiftRequest.StarDate);
             if (engineers.Count < shiftRequest.Count)
             {
                 throw new InvalidOperationException
                 ($"You requested {shiftRequest.Count} engineer{(shiftRequest.Count > 1 ? "s" : "")} but only {engineers.Count} {(engineers.Count > 1 ? "are" : "is")} available");
             }
 
-            ValidateEngineers(engineers, shiftRequest.Date);
+            ValidateEngineers(engineers, shiftRequest.StarDate);
             var randomEngineers = engineers.OrderBy(x => new Random().Next()).Take(shiftRequest.Count).ToList();
             List<EngineerShift> shifts = randomEngineers.Select(e =>
                 new EngineerShift
                 {
-                    Date = shiftRequest.Date,
+                    Date = shiftRequest.StarDate,
                     EngineerId = e.Id,
                     Duration = 4
                 }
