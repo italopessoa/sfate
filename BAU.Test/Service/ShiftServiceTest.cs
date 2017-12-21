@@ -165,8 +165,12 @@ namespace BAU.Test.Service
                 Count = 2
             });
 
-            mockRepository.Verify(m => m.FindEngineersAvailableOn(It.IsAny<DateTime>()), Times.Exactly(5));
+            for (DateTime date = new DateTime(2017, 12, 20); date <= new DateTime(2017, 12, 26); date = date.NextBusinessDay())
+            {
+                mockRepository.Verify(m => m.FindEngineersAvailableOn(date), Times.Once());
+            }
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Exactly(5));
+
             Mapper.Reset();
         }
     }

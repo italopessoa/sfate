@@ -13,7 +13,6 @@ namespace BAU.Api.Service
 {
     public class ShiftService : IShiftService
     {
-        private const int MAX_DAY_SHIFT_HOURS = 4;
         private readonly byte SHIFT_DURATION;
         private readonly IShiftRepository _repository;
         public ShiftService(IShiftRepository repository, IConfiguration config)
@@ -76,7 +75,7 @@ namespace BAU.Api.Service
         {
             for (DateTime date = shiftRequest.StarDate.Date; date <= shiftRequest.EndDate.Date; date = date.NextBusinessDay())
             {
-                this.ScheduleEngineerShift(new ShiftRequestModel { StarDate = shiftRequest.StarDate, Count = shiftRequest.Count });
+                this.ScheduleEngineerShift(new ShiftRequestModel { StarDate = date, Count = shiftRequest.Count });
             }
         }
     }
