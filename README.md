@@ -1,5 +1,6 @@
 # support-wheel-of-fate
-# Check the [API](http://swfbau.azurewebsites.net/swagger)
+[![Build status](https://ci.appveyor.com/api/projects/status/517lk04q410q7kyf?svg=true)](https://ci.appveyor.com/project/italopessoa/support-wheel-of-fate)
+# [Check it out ](http://swfbau.azurewebsites.net/swagger)
 ## Controllers
 ### ShiftController 
 used to manage engineers turns find engineers save turns
