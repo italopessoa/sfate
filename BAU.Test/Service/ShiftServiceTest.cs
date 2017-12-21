@@ -17,9 +17,9 @@ namespace BAU.Test.Service
         public ShiftServiceTest()
         {
             Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfile<BAUMappingProfile>();
-            });
+                {
+                    cfg.AddProfile<BAUMappingProfile>();
+                });
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace BAU.Test.Service
         }
 
         [Fact]
-        public void ScheduleEngineerShiftRange_DateRange_Success()
+        public void ScheduleEngineerShiftRange_Success()
         {
             var engineers = new List<Engineer>
             {
@@ -170,7 +170,6 @@ namespace BAU.Test.Service
                 mockRepository.Verify(m => m.FindEngineersAvailableOn(date), Times.Once());
             }
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Exactly(5));
-
             Mapper.Reset();
         }
     }

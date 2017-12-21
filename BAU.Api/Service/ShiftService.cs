@@ -69,14 +69,16 @@ namespace BAU.Api.Service
             return Mapper.Map<List<EngineerShiftModel>>(_repository.FindAll());
         }
 
-
         // TODO: add better exception handler
-        public void ScheduleEngineerShiftRange(ShiftRequestModel shiftRequest)
+        public List<EngineerShiftModel> ScheduleEngineerShiftRange(ShiftRequestModel shiftRequest)
         {
+            List<EngineerShiftModel> shifts = new List<EngineerShiftModel>();
             for (DateTime date = shiftRequest.StarDate.Date; date <= shiftRequest.EndDate.Date; date = date.NextBusinessDay())
             {
-                this.ScheduleEngineerShift(new ShiftRequestModel { StarDate = date, Count = shiftRequest.Count });
+                shifts.AddRange(this.ScheduleEngineerShift(new ShiftRequestModel { StarDate = date, Count = shiftRequest.Count }));
             }
+
+            return shifts;
         }
     }
 }

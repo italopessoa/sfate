@@ -26,6 +26,7 @@ namespace BAU.Api.Service.Interface
         /// Schedule a range of dates with N engineers per day
         /// </summary>
         /// <param name="shiftRequest">Schedule details (number of engineers and date) </param>
-        void ScheduleEngineerShiftRange(ShiftRequestModel shiftRequest);
+        /// <returns>Scheduled egineers </returns>
+        List<EngineerShiftModel> ScheduleEngineerShiftRange(ShiftRequestModel shiftRequest);
     }
 }

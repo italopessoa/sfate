@@ -92,8 +92,11 @@ namespace BAU.Api.Controllers
             {
                 try
                 {
-                    _shiftService.ScheduleEngineerShiftRange(schedule);
-                    response = Ok("success");
+                    var scheduledEngineers = _shiftService.ScheduleEngineerShiftRange(schedule).Select(x => x.Engineer).ToList();
+                    if (scheduledEngineers.Any())
+                    {
+                        response = Ok(Mapper.Map<List<EngineerModel>>(scheduledEngineers));
+                    }                    
                 }
                 catch (Exception ex)
                 {
