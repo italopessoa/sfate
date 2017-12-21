@@ -59,7 +59,7 @@ namespace BAU.Test.Service
             mockRepository.Setup(s => s.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>())).Returns(savedShiftEngineers);
 
             IShiftService service = new ShiftService(mockRepository.Object, Utils.ConfigurationTestBuilder.GetConfiguration());
-            var result = service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StarDate = DateTime.Today });
+            var result = service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StartDate = DateTime.Today });
             Assert.Equal(Mapper.Map<List<EngineerShiftModel>>(savedShiftEngineers), result);
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Once());
             Mapper.Reset();
@@ -77,7 +77,7 @@ namespace BAU.Test.Service
             mockRepository.Setup(s => s.FindEngineersAvailableOn(DateTime.Today)).Returns(engineers);
 
             IShiftService service = new ShiftService(mockRepository.Object, Utils.ConfigurationTestBuilder.GetConfiguration());
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StarDate = DateTime.Today }));
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StartDate = DateTime.Today }));
             Assert.NotNull(ex);
             Assert.Equal("You requested 2 engineers but only 1 is available", ex.Message);
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Never());
@@ -97,7 +97,7 @@ namespace BAU.Test.Service
             mockRepository.Setup(s => s.FindEngineersAvailableOn(new DateTime(2017, 12, 12))).Returns(engineers);
 
             IShiftService service = new ShiftService(mockRepository.Object, Utils.ConfigurationTestBuilder.GetConfiguration());
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StarDate = new DateTime(2017, 12, 12) }));
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StartDate = new DateTime(2017, 12, 12) }));
             Assert.NotNull(ex);
             Assert.Equal("1: An engineer cannot have half day shifts on consecutive days.", ex.Message);
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Never());
@@ -117,7 +117,7 @@ namespace BAU.Test.Service
             mockRepository.Setup(s => s.FindEngineersAvailableOn(new DateTime(2017, 12, 12))).Returns(engineers);
 
             IShiftService service = new ShiftService(mockRepository.Object, Utils.ConfigurationTestBuilder.GetConfiguration());
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StarDate = new DateTime(2017, 12, 12) }));
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StartDate = new DateTime(2017, 12, 12) }));
             Assert.NotNull(ex);
             Assert.Equal("1: An engineer cannot have half day shifts on consecutive days.", ex.Message);
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Never());
@@ -137,7 +137,7 @@ namespace BAU.Test.Service
             mockRepository.Setup(s => s.FindEngineersAvailableOn(new DateTime(2017, 12, 12))).Returns(engineers);
 
             IShiftService service = new ShiftService(mockRepository.Object, Utils.ConfigurationTestBuilder.GetConfiguration());
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StarDate = new DateTime(2017, 12, 12) }));
+            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() => service.ScheduleEngineerShift(new ShiftRequestModel { Count = 2, StartDate = new DateTime(2017, 12, 12) }));
             Assert.NotNull(ex);
             Assert.Equal("1: An engineer can do at most one half day shift in a day.", ex.Message);
             mockRepository.Verify(m => m.ScheduleEngineerShift(It.IsAny<List<EngineerShift>>()), Times.Never());
@@ -160,7 +160,7 @@ namespace BAU.Test.Service
             IShiftService service = new ShiftService(mockRepository.Object, Utils.ConfigurationTestBuilder.GetConfiguration());
             service.ScheduleEngineerShiftRange(new ShiftRequestModel
             {
-                StarDate = new DateTime(2017, 12, 20),
+                StartDate = new DateTime(2017, 12, 20),
                 EndDate = new DateTime(2017, 12, 26),
                 Count = 2
             });

@@ -43,19 +43,19 @@ namespace BAU.Api.Service
 
         public List<EngineerShiftModel> ScheduleEngineerShift(ShiftRequestModel shiftRequest)
         {
-            List<Engineer> engineers = _repository.FindEngineersAvailableOn(shiftRequest.StarDate);
+            List<Engineer> engineers = _repository.FindEngineersAvailableOn(shiftRequest.StartDate);
             if (engineers.Count < shiftRequest.Count)
             {
                 throw new InvalidOperationException
                 ($"You requested {shiftRequest.Count} engineer{(shiftRequest.Count > 1 ? "s" : "")} but only {engineers.Count} {(engineers.Count > 1 ? "are" : "is")} available");
             }
 
-            ValidateEngineers(engineers, shiftRequest.StarDate);
+            ValidateEngineers(engineers, shiftRequest.StartDate);
             var randomEngineers = engineers.OrderBy(x => new Random().Next()).Take(shiftRequest.Count).ToList();
             List<EngineerShift> shifts = randomEngineers.Select(e =>
                 new EngineerShift
                 {
-                    Date = shiftRequest.StarDate,
+                    Date = shiftRequest.StartDate,
                     EngineerId = e.Id,
                     Duration = 4
                 }
@@ -73,9 +73,9 @@ namespace BAU.Api.Service
         public List<EngineerShiftModel> ScheduleEngineerShiftRange(ShiftRequestModel shiftRequest)
         {
             List<EngineerShiftModel> shifts = new List<EngineerShiftModel>();
-            for (DateTime date = shiftRequest.StarDate.Date; date <= shiftRequest.EndDate.Date; date = date.NextBusinessDay())
+            for (DateTime date = shiftRequest.StartDate.Date; date <= shiftRequest.EndDate.Date; date = date.NextBusinessDay())
             {
-                shifts.AddRange(this.ScheduleEngineerShift(new ShiftRequestModel { StarDate = date, Count = shiftRequest.Count }));
+                shifts.AddRange(this.ScheduleEngineerShift(new ShiftRequestModel { StartDate = date, Count = shiftRequest.Count }));
             }
 
             return shifts;

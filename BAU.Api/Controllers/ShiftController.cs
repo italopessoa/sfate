@@ -156,15 +156,15 @@ namespace BAU.Api.Controllers
                 return BadRequest("All values must be informed.");
 
             IActionResult response = null;
-            if (model.StarDate.DayOfWeek == DayOfWeek.Saturday || model.StarDate.DayOfWeek == DayOfWeek.Sunday)
+            if (model.StartDate.DayOfWeek == DayOfWeek.Saturday || model.StartDate.DayOfWeek == DayOfWeek.Sunday)
             {
                 response = BadRequest("Weekends are not valid working days.");
             }
-            else if (model.StarDate == DateTime.MinValue)
+            else if (model.StartDate == DateTime.MinValue)
             {
                 response = BadRequest("Date value cannot be empty.");
             }
-            else if (model.StarDate < DateTime.Now.Date)
+            else if (model.StartDate < DateTime.Now.Date)
             {
                 response = BadRequest("It is not possible to schedule backward.");
             }
@@ -174,7 +174,7 @@ namespace BAU.Api.Controllers
             }
             else if (model.EndDate > DateTime.MinValue)
             {
-                if (model.EndDate <= model.StarDate)
+                if (model.EndDate <= model.StartDate)
                 {
                     response = BadRequest("The final date must be greater than the initial date.");
                 }

@@ -21,7 +21,7 @@ namespace BAU.Test.Controllers
         {
             Mock<IShiftService> mockService = new Mock<IShiftService>(MockBehavior.Strict);
             ShiftController controller = new ShiftController(mockService.Object);
-            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Count = 1, StarDate = new DateTime(2017, 12, 17) });
+            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Count = 1, StartDate = new DateTime(2017, 12, 17) });
             Assert.NotNull(result);
             Assert.True(result.GetType() == typeof(BadRequestObjectResult));
             Assert.Equal("Weekends are not valid working days.", (result as BadRequestObjectResult).Value);
@@ -45,7 +45,7 @@ namespace BAU.Test.Controllers
         {
             Mock<IShiftService> mockService = new Mock<IShiftService>(MockBehavior.Strict);
             ShiftController controller = new ShiftController(mockService.Object);
-            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { StarDate = DateTime.Now.NextBusinessDay() });
+            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { StartDate = DateTime.Now.NextBusinessDay() });
             Assert.NotNull(result);
             Assert.True(result.GetType() == typeof(BadRequestObjectResult));
             Assert.Equal("The number of support engineers is required.", (result as BadRequestObjectResult).Value);
@@ -59,7 +59,7 @@ namespace BAU.Test.Controllers
             mockService.Setup(s => s.ScheduleEngineerShift(It.IsAny<ShiftRequestModel>())).Throws(new InvalidOperationException("Testing controller exception handler"));
 
             ShiftController controller = new ShiftController(mockService.Object);
-            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Count = 1, StarDate = DateTime.Now.NextBusinessDay() });
+            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Count = 1, StartDate = DateTime.Now.NextBusinessDay() });
             Assert.NotNull(result);
             Assert.True(result.GetType() == typeof(BadRequestObjectResult));
             Assert.Equal("Testing controller exception handler", (result as BadRequestObjectResult).Value);
@@ -90,7 +90,7 @@ namespace BAU.Test.Controllers
             var model = new ShiftRequestModel
             {
                 Count = 2,
-                StarDate = date.NextDayOfWeek(DayOfWeek.Tuesday),
+                StartDate = date.NextDayOfWeek(DayOfWeek.Tuesday),
                 EndDate = date
             };
             var result = controller.ScheduleEngineersShiftRange(model);
@@ -112,7 +112,7 @@ namespace BAU.Test.Controllers
             var model = new ShiftRequestModel
             {
                 Count = 2,
-                StarDate = date,
+                StartDate = date,
                 EndDate = date.NextDayOfWeek(DayOfWeek.Tuesday)
             };
             var result = controller.ScheduleEngineersShiftRange(model);
@@ -142,7 +142,7 @@ namespace BAU.Test.Controllers
             var model = new ShiftRequestModel
             {
                 Count = 2,
-                StarDate = date,
+                StartDate = date,
                 EndDate = date.NextDayOfWeek(DayOfWeek.Tuesday)
             };
             var result = controller.ScheduleEngineersShiftRange(model);
@@ -176,7 +176,7 @@ namespace BAU.Test.Controllers
                 });
 
             ShiftController controller = new ShiftController(mockService.Object);
-            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Count = 1, StarDate = new DateTime(2017, 12, 18) });
+            var result = controller.ScheduleEngineersShift(new ShiftRequestModel { Count = 1, StartDate = new DateTime(2017, 12, 18) });
             Assert.NotNull(result);
             Assert.True(result.GetType() == typeof(OkObjectResult));
             var expected = new List<EngineerModel> {
