@@ -20,7 +20,7 @@ namespace BAU.Api
                 {
                     Version = "v1",
                     Title = "Support Wheel of Fate API",
-                    Description = "A simple example ASP.NET Core Web API",
+                    Description = "A REST API to select two engineers at random to both complete a half day of support each.",
                     TermsOfService = "None",
                     Contact = new Contact { Name = "Italo Pessoa", Email = "", Url = "https://github.com/italopessoa/support-wheel-of-fate" },
                     License = new License { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
