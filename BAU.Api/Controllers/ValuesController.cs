@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BAU.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
@@ -23,7 +24,6 @@ namespace BAU.Api.Controllers
         /// </summary>
         /// <response code="200">Returns a message to indicate if the token is valid</response>
         /// <returns>Settings array</returns>
-        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(string[]), 200)]
         public IActionResult Get()
@@ -37,7 +37,6 @@ namespace BAU.Api.Controllers
         /// <remarks>Get system settings.</remarks>
         /// <response code="200">Returns a array with settings values</response>
         /// <returns>Settings array</returns>
-        [AllowAnonymous]
         [HttpGet]
         [Route("settings")]
         [ProducesResponseType(typeof(object), 200)]
@@ -45,12 +44,13 @@ namespace BAU.Api.Controllers
         {
             return Ok(new
             {
-                SHIFT_DURATION = _config["SHIFT_DURATION"],
-                WEEK_SCAN_PERIOD = _config["WEEK_SCAN_PERIOD"],
-                MAX_SHIFT_SUM_HOURS_DURATION = _config["MAX_SHIFT_SUM_HOURS_DURATION"],
+                SHIFT_DURATION = _config["App:SHIFT_DURATION"],
+                WEEK_SCAN_PERIOD = _config["App:WEEK_SCAN_PERIOD"],
+                MAX_SHIFT_SUM_HOURS_DURATION = _config["App:MAX_SHIFT_SUM_HOURS_DURATION"],
                 issuer = _config["Jwt:Issuer"],
                 audience = _config["Jwt:Audience"],
-                key = _config["Jwt:Key"]
+                key = _config["Jwt:Key"],
+                LifeTimeInMinutes = _config["Jwt:LifeTimeInMinutes"]
             });
         }
     }

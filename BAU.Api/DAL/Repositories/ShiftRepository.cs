@@ -34,18 +34,18 @@ namespace BAU.Api.DAL.Repositories
         /// <param name="config"></param>
         public ShiftRepository(BAUDbContext context, IConfiguration config)
         {
-            if (String.IsNullOrEmpty(config["MAX_SHIFT_SUM_HOURS_DURATION"]))
+            if (String.IsNullOrEmpty(config["App:MAX_SHIFT_SUM_HOURS_DURATION"]))
             {
-                throw new ArgumentNullException("MAX_SHIFT_SUM_HOURS_DURATION");
+                throw new ArgumentNullException("App:MAX_SHIFT_SUM_HOURS_DURATION");
             }
 
-            if (String.IsNullOrEmpty(config["WEEK_SCAN_PERIOD"]))
+            if (String.IsNullOrEmpty(config["App:WEEK_SCAN_PERIOD"]))
             {
-                throw new ArgumentNullException("WEEK_SCAN_PERIOD");
+                throw new ArgumentNullException("App:WEEK_SCAN_PERIOD");
             }
 
-            this.MAX_SHIFT_SUM_HOURS_DURATION = int.Parse(config["MAX_SHIFT_SUM_HOURS_DURATION"]);
-            this.WEEK_SCAN_PERIOD = int.Parse(config["WEEK_SCAN_PERIOD"]);
+            this.MAX_SHIFT_SUM_HOURS_DURATION = int.Parse(config["App:MAX_SHIFT_SUM_HOURS_DURATION"]);
+            this.WEEK_SCAN_PERIOD = int.Parse(config["App:WEEK_SCAN_PERIOD"]);
             _context = context;
         }
         public List<Engineer> FindEngineersAvailableOn(DateTime shiftDate)

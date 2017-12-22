@@ -33,7 +33,7 @@ namespace BAU.Test.DAL.Repositories
                 }
                 catch (ArgumentNullException ex)
                 {
-                    Assert.Equal("MAX_SHIFT_SUM_HOURS_DURATION", ex.ParamName);
+                    Assert.Equal("App:MAX_SHIFT_SUM_HOURS_DURATION", ex.ParamName);
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace BAU.Test.DAL.Repositories
                 }
                 catch (ArgumentNullException ex)
                 {
-                    Assert.Equal("WEEK_SCAN_PERIOD", ex.ParamName);
+                    Assert.Equal("App:WEEK_SCAN_PERIOD", ex.ParamName);
                 }
             }
         }

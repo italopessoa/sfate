@@ -13,37 +13,16 @@ namespace BAU.Api.Service
 {
     public class ShiftService : IShiftService
     {
-        private const int MAX_DAY_SHIFT_HOURS = 4;
         private readonly byte SHIFT_DURATION;
         private readonly IShiftRepository _repository;
         public ShiftService(IShiftRepository repository, IConfiguration config)
         {
-            if (String.IsNullOrEmpty(config["SHIFT_DURATION"]))
+            if (String.IsNullOrEmpty(config["App:SHIFT_DURATION"]))
             {
-                throw new ArgumentNullException("SHIFT_DURATION");
+                throw new ArgumentNullException("App:SHIFT_DURATION");
             }
-            SHIFT_DURATION = byte.Parse(config["SHIFT_DURATION"]);
+            SHIFT_DURATION = byte.Parse(config["App:SHIFT_DURATION"]);
             _repository = repository;
-        }
-        public void ScheduleEngineerShift(EngineerShiftModel engineerShiftModel)
-        {
-            List<EngineerShift> shifts = _repository.FindEngineerShifts(
-                    engineerShiftModel.Engineer.Id,
-                    engineerShiftModel.Date.PreviousBusinessDay(),
-                    engineerShiftModel.Date.NextBusinessDay()
-                );
-            int totalShiftDay = shifts.Where(s => s.Date == engineerShiftModel.Date).Sum(s => s.Duration);
-            if (totalShiftDay + engineerShiftModel.Duration > MAX_DAY_SHIFT_HOURS)
-            {
-                throw new InvalidOperationException("An engineer can do at most one half day shift in a day.");
-            }
-            if (shifts.Where(s => s.Date == engineerShiftModel.Date.PreviousBusinessDay()
-                || s.Date == engineerShiftModel.Date.NextBusinessDay()).Any())
-            {
-                throw new InvalidOperationException("An engineer cannot have half day shifts on consecutive days.");
-            }
-
-            throw new NotImplementedException();
         }
 
         private void ValidateEngineers(List<Engineer> engineers, DateTime shiftDate)
@@ -64,19 +43,19 @@ namespace BAU.Api.Service
 
         public List<EngineerShiftModel> ScheduleEngineerShift(ShiftRequestModel shiftRequest)
         {
-            List<Engineer> engineers = _repository.FindEngineersAvailableOn(shiftRequest.Date);
+            List<Engineer> engineers = _repository.FindEngineersAvailableOn(shiftRequest.StartDate);
             if (engineers.Count < shiftRequest.Count)
             {
                 throw new InvalidOperationException
                 ($"You requested {shiftRequest.Count} engineer{(shiftRequest.Count > 1 ? "s" : "")} but only {engineers.Count} {(engineers.Count > 1 ? "are" : "is")} available");
             }
 
-            ValidateEngineers(engineers, shiftRequest.Date);
+            ValidateEngineers(engineers, shiftRequest.StartDate);
             var randomEngineers = engineers.OrderBy(x => new Random().Next()).Take(shiftRequest.Count).ToList();
             List<EngineerShift> shifts = randomEngineers.Select(e =>
                 new EngineerShift
                 {
-                    Date = shiftRequest.Date,
+                    Date = shiftRequest.StartDate,
                     EngineerId = e.Id,
                     Duration = 4
                 }
@@ -88,6 +67,18 @@ namespace BAU.Api.Service
         public List<EngineerShiftModel> FindAll()
         {
             return Mapper.Map<List<EngineerShiftModel>>(_repository.FindAll());
+        }
+
+        // TODO: add better exception handler
+        public List<EngineerShiftModel> ScheduleEngineerShiftRange(ShiftRequestModel shiftRequest)
+        {
+            List<EngineerShiftModel> shifts = new List<EngineerShiftModel>();
+            for (DateTime date = shiftRequest.StartDate.Date; date <= shiftRequest.EndDate.Date; date = date.NextBusinessDay())
+            {
+                shifts.AddRange(this.ScheduleEngineerShift(new ShiftRequestModel { StartDate = date, Count = shiftRequest.Count }));
+            }
+
+            return shifts;
         }
     }
 }

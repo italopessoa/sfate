@@ -16,6 +16,8 @@ using AutoMapper;
 using BAU.Api.Models;
 using BAU.Api.Service.Interface;
 using BAU.Api.Service;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 
 namespace BAU.Api
 {
@@ -53,14 +55,18 @@ namespace BAU.Api
                 );
             });
 
-            services.AddScoped<IShiftRepository,ShiftRepository>();
-            services.AddScoped<IShiftService,ShiftService>();
+            services.AddScoped<IShiftRepository, ShiftRepository>();
+            services.AddScoped<IShiftService, ShiftService>();
             services.AddDbContext<BAUDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("SqlServer"))
             );
 
             ConfigureServicesJWT(services);
             ConfigureServicesSwagger(services);
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new RequireHttpsAttribute());
+            });
             services.AddMvc();
         }
 
@@ -70,7 +76,8 @@ namespace BAU.Api
         /// </summary>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            Mapper.Initialize(cfg => {
+            Mapper.Initialize(cfg =>
+            {
                 cfg.AddProfile<BAUMappingProfile>();
             });
 
@@ -83,10 +90,14 @@ namespace BAU.Api
             using (var serviceScope = serviceScopeFactory.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<BAUDbContext>();
-                // dbContext.Database.EnsureCreated();
+                dbContext.Database.EnsureCreated();
             };
 
             app.UseCors("CorsPolicy");
+            
+            var options = new RewriteOptions().AddRedirectToHttps();
+            app.UseRewriter(options);
+            
             ConfigureSwagger(app);
             ConfigureJWT(app);
             app.UseMvc();
