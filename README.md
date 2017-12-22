@@ -78,8 +78,8 @@ deploy:
 
 Using a simple Controller-> Service -> Repository implementation the code is organized in folders just for simplicity and avoid configuration errors on the on the beginning of developmento. 
 - Repositories are in the folder DAL (Data Access Layer)
-- Services are in the folder Serivice
-- Since almost everything is covered by tests in the future those parts should be put in separated `Class Libraries`
+- Services are in the folder Service
+- Since almost everything is covered by tests, in the future, those parts should be put in separated `Class Libraries`
 - create  Startup class diferent files of to hold different settings
 
 ## Packages
