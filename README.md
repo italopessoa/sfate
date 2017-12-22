@@ -1,31 +1,43 @@
-# support-wheel-of-fate
+# Support Wheel of Fate - API
+
+A REST API that receives a request and should select two engineers at random to both complete a half day of support each. The API works by itself, you can do all the operations and test the results on your browser.
+
 [![Build status](https://ci.appveyor.com/api/projects/status/517lk04q410q7kyf?svg=true)](https://ci.appveyor.com/project/italopessoa/support-wheel-of-fate)
 # [Check it out ](http://swfbau.azurewebsites.net/swagger)
+
 ## Controllers
 ### ShiftController 
-used to manage engineers turns find engineers save turns
+- Create and list engineer turns
 
 ### AuthController
-- use JWT to authenticate user, even though there is no user management implementation, token based authentication works just fine, and will make easier integrate with other clients.
+- Authenticate users using [JWT](https://jwt.io), even though there is no solid user management implementation, token based authentication works just fine, and will make easier to integrate with other clients.
 
 ### ValuesController
+- Used to list some application settings
 
 ## Settings
 ```json
-    "Shift": {
+    "Jwt": {
+        "Issuer": "http://localhost:5000",
+        "Audience": "http://localhost:5000",
+        "Key": "veryVerySecretKey",
+        "LifeTimeInMinutes":"30"
+    },
+    "App":{
         "MAX_SHIFT_SUM_HOURS_DURATION": "8",
         "WEEK_SCAN_PERIOD" : "1",
         "SHIFT_DURATION" : "4"
     }
 ```
 - MAX_SHIFT_SUM_HOURS_DURATION: 
-    - description
+    - maximum amount of shifts (in hours) a engineer can do on in a period of N weeks
 - WEEK_SCAN_PERIOD
-    - description
+    - set how many weeks to take in count to filter engineers
+    - e.g 1: the current week and the previous one, therefore 2 weeks
  - SHIFT_DURATION
-    - description
-### SHIFT_DURATION, MAX_SHIFT_SUM_HOURS_DURATION, WEEK_SCAN_PERIOD
-used to configure how much time takes each turn and the maximum amount of time an engineer can have in his N weeks period. To avoid creating a new table with only two values that will barely change, I decided to use environment variables to store them.
+    - how long (in hours) lasts a shift
+    
+`To avoid creating a new table with only two values that will barely change, I decided to use environment variables to store them.`
 
 ## Continuous integrations & Continuous Delivery
 - AppVeyor
@@ -62,18 +74,36 @@ deploy:
 - provider: Environment
   name: BAU-production
 ```
-### CI/CD 
+## Architecture
 
-- DAL is just a folder not a class library
+Using a simple Controller-> Service -> Repository implementation the code is organized in folders just for simplicity and avoid configuration errors on the on the beginning of developmento. 
+- Repositories are in the folder DAL (Data Access Layer)
+- Services are in the folder Serivice
+- Since almost everything is covered by tests in the future those parts should be put in separated `Class Libraries`
 - create  Startup class diferent files of to hold different settings
 
+## Packages
+- Microsoft.EntityFrameworkCore
+- Swashbuckle.AspNetCore
+- AutoMapper
 
+## Running
+Set `SqlServer` connections string value or use Entity Framework in Memory (Startup.cs).
 
+Execute
 
-### Architecture
-
-there is only two layer on the project, DAL (Data Access Layer) and Controllers. As the project still in development and does not have many features create more layers like a Service or Facade could lead to needless complexity
-
+```cmd
+dotnet restore
+cd BAU.Api
+dotnet run
+```
+When access the swagger interface use the following credentials to authenticate:
+```json
+{
+  "username": "support",
+  "password": "support"
+}
+```
 ## DRAFTS
 ```sql
 --engenheiros sem turno e sem turno consecutivo
