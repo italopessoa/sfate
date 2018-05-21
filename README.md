@@ -1,4 +1,4 @@
-# Support Wheel of Fate - API
+# SFate - API
 
 A REST API that receives a request and should select two engineers at random to both complete a half day of support each. The API works by itself, you can do all the operations and test the results on your browser.
 
